@@ -18,10 +18,12 @@ FlexiRide is a modern mobile application that enables individuals to rent and sh
 
 - **Frontend:** React Native  
 - **Backend:** Spring Boot (REST APIs)  
-- **Database:** MySQL
-- **Authentication:** JWT 
+- **Database:** MySQL  
+- **Authentication:** JWT  
 
 ---
 
+## 🎨 Figma Design
 
-
+You can view the UI/UX prototype of the FlexiRide app on Figma:  
+🔗 [Figma Design Link](https://www.figma.com/design/SnkAGpc1dQP3bMtd7KPm9F/Untitled?node-id=0-1&t=tFEPMLK4vjpHUUp3-1)
