@@ -101,9 +101,9 @@ export default function Home() {
       {/* Header Section */}
       <View style={tw`mb-3 flex-row justify-between items-center`}>
         <Text style={tw`text-2xl font-bold text-gray-900`}>FlexiRide</Text>
-        <TouchableOpacity style={tw`p-2`}>
-          <Ionicons name="notifications-outline" size={28} color="black" />
-        </TouchableOpacity>
+      <TouchableOpacity style={tw`p-2`} onPress={() => navigation.navigate('Notification')}>
+        <Ionicons name="notifications-outline" size={28} color="black" />
+      </TouchableOpacity>
       </View>
       <Text style={tw`text-xs text-gray-500 mb-3`}>{formattedDate}</Text>
 

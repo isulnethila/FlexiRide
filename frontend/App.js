@@ -10,6 +10,8 @@ import SearchScreen from './pages/Search';
 import AddScreen from './pages/Add';
 import FavouriteScreen from './pages/Favourite';
 import ProfileScreen from './pages/Profile';
+import VehicleDetailsScreen from './pages/VehicleDetails';
+import NotificationScreen from './pages/Notification';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -50,8 +52,6 @@ function MainTabs() {
   );
 }
 
-import VehicleDetailsScreen from './pages/VehicleDetails';
-
 export default function App() {
   return (
     <NavigationContainer>
@@ -59,6 +59,7 @@ export default function App() {
         <Stack.Screen name="Startup" component={StartupScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
+        <Stack.Screen name="Notification" component={NotificationScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
