@@ -50,12 +50,15 @@ function MainTabs() {
   );
 }
 
+import VehicleDetailsScreen from './pages/VehicleDetails';
+
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Startup" component={StartupScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

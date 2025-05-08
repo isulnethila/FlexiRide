@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
 
 export default function Home() {
   const [vehicles, setVehicles] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     // Simulate fetching data from backend
@@ -29,6 +31,10 @@ export default function Home() {
     day: 'numeric',
   });
 
+  const handleVehiclePress = (vehicle) => {
+    navigation.navigate('VehicleDetails', { vehicle });
+  };
+
   return (
     <View style={tw`flex-1 bg-white p-2`}>
       <Text style={tw`text-4xl text-left font-bold mt-10`}>FlexiRide</Text>
@@ -38,13 +44,14 @@ export default function Home() {
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={tw`mt-4`}>
         {vehicles.map(vehicle => (
-          <View
+          <TouchableOpacity
             key={vehicle.id}
             style={tw`bg-gray-200 rounded-lg p-4 mr-4 w-48 h-50`}
+            onPress={() => handleVehiclePress(vehicle)}
           >
             <Text style={tw`text-lg font-bold`}>{vehicle.name}</Text>
             <Text style={tw`text-sm mt-1`}>{vehicle.details}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
     </View>
