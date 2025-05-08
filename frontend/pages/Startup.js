@@ -7,10 +7,9 @@ export default function StartupScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate('Home');
+    setTimeout(() => {
+      navigation.replace('MainTabs', { screen: 'Home' });
     }, 2000);
-    return () => clearTimeout(timer);
   }, []);
 
   return (
