@@ -64,7 +64,9 @@ export default function Edit() {
   };
 
   return (
-    <ScrollView style={tw`flex-1 bg-white p-5 pt-7`}>
+    <ScrollView style={tw`flex-1 bg-white p-5 pt-7`} contentContainerStyle={tw`pb-20`}>
+     
+
       <Text style={tw`text-xl font-bold mb-4`}>Edit Vehicle Details</Text>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Name</Text>
@@ -103,7 +105,7 @@ export default function Edit() {
         style={tw`bg-blue-600 px-4 py-2 rounded mb-4`}
         onPress={pickImage}
       >
-        <Text style={tw`text-white `}>Choose Photo</Text>
+        <Text style={tw`text-white`}>Choose Photo</Text>
       </TouchableOpacity>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Brand Name</Text>
@@ -172,7 +174,7 @@ export default function Edit() {
         placeholder="Engine Capacity"
       />
 
-      <View style={tw`flex-row justify-between mb-10`}>
+      <View style={tw`flex-row justify-between mb-4`}>
         <TouchableOpacity
           style={tw`bg-gray-400 px-4 py-2 rounded`}
           onPress={handleCancel}

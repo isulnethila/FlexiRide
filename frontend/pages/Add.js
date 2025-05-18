@@ -1,50 +1,50 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
 
 const mockVehicles = [
   { 
     id: '1', 
-    name: 'Toyota Camry', 
-    details: 'Sedan - 4-seater',
-    price: '$45/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/2251/2251826.png'
+    name: 'Pickup Truck', 
+    details: 'Hauling',
+    price: '$60/day',
+    image: 'https://cdn-icons-png.flaticon.com/512/3663/3663374.png',
+    distance: '0.5 mi'
   },
   { 
     id: '2', 
-    name: 'Honda Civic', 
-    details: 'Compact - 4-seater',
-    price: '$40/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/3079/3079017.png'
-  },
-  { 
-    id: '3', 
-    name: 'Ford Mustang', 
-    details: 'Convertible - 2-seater',
-    price: '$75/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/744/744465.png'
+    name: 'Minivan', 
+    details: 'Family',
+    price: '$55/day',
+    image: 'https://cdn-icons-png.flaticon.com/512/2489/2489223.png',
+    distance: '1.2 mi'
   }
 ];
 
-const VehicleCard = ({ vehicle, onEdit }) => (
-  <View style={tw`bg-white rounded-lg p-4 mb-3 w-full shadow-sm border border-gray-100`}>
+const VehicleCard = ({ vehicle, onEditPress }) => (
+  <View 
+    style={tw`bg-white rounded-lg p-4 mb-3 w-full shadow-sm border border-gray-100`}
+  >
     <View style={tw`flex-row justify-between items-center`}>
-      <View style={tw`flex-row`}>
+      <View style={tw`flex-row flex-1`}>
         <Image 
           source={{ uri: vehicle.image }} 
           style={tw`w-20 h-30 mr-3`}
           resizeMode="contain"
         />
-        <View style={tw`justify-center`}>
+        <View style={tw`justify-center flex-1`}>
           <Text style={tw`font-bold text-gray-900`}>{vehicle.name}</Text>
           <Text style={tw`font-bold text-blue-600`}>{vehicle.price}</Text>
           <Text style={tw`text-xs text-gray-500`}>{vehicle.details}</Text>
+          {vehicle.distance && (
+            <Text style={tw`text-xs text-gray-400 mt-1`}>{vehicle.distance} away</Text>
+          )}
         </View>
       </View>
-      <TouchableOpacity 
-        style={tw`bg-blue-500 px-3 py-1 rounded`}
-        onPress={onEdit}
+      <TouchableOpacity
+        style={tw`bg-blue-600 px-3 py-1 rounded`}
+        onPress={onEditPress}
       >
         <Text style={tw`text-white text-sm`}>Edit</Text>
       </TouchableOpacity>
@@ -55,7 +55,7 @@ const VehicleCard = ({ vehicle, onEdit }) => (
 export default function Add() {
   const navigation = useNavigation();
 
-  const handleEdit = (vehicle) => {
+  const handleEditPress = (vehicle) => {
     navigation.navigate('Edit', { vehicle });
   };
 
@@ -67,12 +67,18 @@ export default function Add() {
         renderItem={({ item }) => (
           <VehicleCard 
             vehicle={item} 
-            onEdit={() => handleEdit(item)} 
+            onEditPress={() => handleEditPress(item)} 
           />
         )}
         keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
       />
+      <TouchableOpacity
+        style={tw`absolute bottom-10 right-5 bg-green-600 px-5 py-3 rounded-full shadow-lg`}
+        onPress={() => navigation.navigate('AddNewVehical')}
+      >
+        <Text style={tw`text-white text-lg font-semibold`}>Add New Vehicle</Text>
+      </TouchableOpacity>
     </View>
   );
 }

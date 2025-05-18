@@ -13,6 +13,7 @@ import ProfileScreen from './pages/Profile';
 import VehicleDetailsScreen from './pages/VehicleDetails';
 import NotificationScreen from './pages/Notification';
 import EditScreen from './pages/Edit';
+import AddNewVehicalScreen from './pages/AddNewVehical';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -62,6 +63,7 @@ export default function App() {
         <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
         <Stack.Screen name="Notification" component={NotificationScreen} />
         <Stack.Screen name="Edit" component={EditScreen} />
+        <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
