@@ -1,43 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-const initialRequests = [
-  {
-    id: '1',
-    type: 'new',
-    message: 'You have a new rental request for your Toyota Prius from April 12–14.',
-    status: null,
-  },
-  {
-    id: '2',
-    type: 'pending',
-    message: 'Request for Honda Civic from April 12–14.',
-    status: 'Pending',
-  },
-  {
-    id: '3',
-    type: 'accepted',
-    message: 'Request for Honda Civic from April 12–14.',
-    status: 'Accepted',
-  },
-];
+import { useRequests } from '../context/RequestsContext';
 
 export default function Profile() {
-  const [requests, setRequests] = useState(initialRequests);
-
-  const removeRequest = (id) => {
-    setRequests((prev) => prev.filter((req) => req.id !== id));
-  };
-
-  const updateRequestStatus = (id, newStatus) => {
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.id === id ? { ...req, status: newStatus, type: newStatus.toLowerCase() } : req
-      )
-    );
-  };
+  const { requests, removeRequest, updateRequestStatus } = useRequests();
 
   const handleAccept = (id) => {
     updateRequestStatus(id, 'Accepted');
@@ -56,7 +24,7 @@ export default function Profile() {
   };
 
   return (
-    <ScrollView style={tw`flex-1 bg-white p-4 mt-5`}>
+    <ScrollView style={tw`flex-1 bg-white p-4`}>
       <Text style={tw`text-2xl font-bold mb-4`}>Profile</Text>
 
       <View style={tw`border border-gray-400 rounded p-4 mb-6`}>
