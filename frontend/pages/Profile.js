@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useRequests } from '../context/RequestsContext';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Profile() {
+  const navigation = useNavigation();
   const { requests, removeRequest, updateRequestStatus } = useRequests();
 
   const handleAccept = (id) => {
@@ -24,16 +26,22 @@ export default function Profile() {
   };
 
   return (
-    <ScrollView style={tw`flex-1 bg-white p-4`}>
+    <ScrollView style={tw`flex-1 bg-white p-4 mt-5`}>
       <Text style={tw`text-2xl font-bold mb-4`}>Profile</Text>
 
       <View style={tw`border border-gray-400 rounded p-4 mb-6`}>
         <Text style={tw`text-lg mb-3`}>Hello, welcome to FlexiRide!</Text>
         <View style={tw`flex-row`}>
-          <TouchableOpacity style={tw`bg-gray-800 px-4 py-2 rounded mr-3`}>
+          <TouchableOpacity
+            style={tw`bg-gray-800 px-4 py-2 rounded mr-3`}
+            onPress={() => navigation.navigate('Login')}
+          >
             <Text style={tw`text-white`}>Login</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={tw`border border-gray-800 px-4 py-2 rounded`}>
+          <TouchableOpacity
+            style={tw`border border-gray-800 px-4 py-2 rounded`}
+            onPress={() => navigation.navigate('SignUp')}
+          >
             <Text style={tw`text-gray-800`}>Sign Up</Text>
           </TouchableOpacity>
         </View>

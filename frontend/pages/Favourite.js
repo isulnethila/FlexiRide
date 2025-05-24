@@ -8,7 +8,7 @@ export default function Favourite({ navigation }) {
 
   const renderItem = ({ item }) => (
     <>
-    <Text style={tw`text-xl font-bold m-4 mt-7 mb-4 `}>Saved</Text>
+    
     <TouchableOpacity
       onPress={() => navigation.navigate('VehicleDetails', { vehicle: item })}
       style={tw`flex-row items-center p-4 border-b border-gray-200`}
@@ -40,11 +40,18 @@ export default function Favourite({ navigation }) {
   }
 
   return (
+    <>
+    <Text style={tw`text-xl font-bold  mb-4 m-4 mt-7`}>Saved</Text>
     <FlatList
       data={favorites}
       keyExtractor={(item) => item.id}
       renderItem={renderItem}
       contentContainerStyle={tw`p-4`}
     />
+
+
+    
+    </>
+    
   );
 }

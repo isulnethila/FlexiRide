@@ -68,6 +68,8 @@ export default function App() {
             <Stack.Screen name="Notification" component={NotificationScreen} />
             <Stack.Screen name="Edit" component={EditScreen} />
             <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
+            <Stack.Screen name="Login" component={require('./pages/Login').default} />
+            <Stack.Screen name="SignUp" component={require('./pages/SignUp').default} />
           </Stack.Navigator>
         </NavigationContainer>
       </RequestsProvider>
