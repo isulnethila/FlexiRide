@@ -41,8 +41,8 @@ export default function VehicleDetails({ route }) {
   };
 
   return (
-    <ScrollView style={tw`flex-1 bg-white p-4`}>
-      <Text style={tw`text-3xl font-bold mb-4`}>{vehicle.name}</Text>
+    <ScrollView style={tw`flex-1 bg-white p-4 mt-5`}>
+      <Text style={tw`text-3xl font-bold mb-4 `}>{vehicle.name}</Text>
       <Image 
         source={{ uri: vehicle.image }} 
         style={tw`w-full h-48 mb-4 rounded-lg`}
@@ -50,6 +50,9 @@ export default function VehicleDetails({ route }) {
       />
       <Text style={tw`text-lg mb-2`}>{vehicle.details}</Text>
       <Text style={tw`text-lg font-semibold mb-2`}>Price: {vehicle.price}</Text>
+      {vehicle.category && (
+        <Text style={tw`text-sm text-gray-600 mb-2`}>Category: {vehicle.category}</Text>
+      )}
       {vehicle.distance && (
         <Text style={tw`text-sm text-gray-600 mb-2`}>Distance: {vehicle.distance}</Text>
       )}

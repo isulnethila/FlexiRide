@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
+
+const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 
 export default function Edit() {
   const navigation = useNavigation();
@@ -21,6 +24,7 @@ export default function Edit() {
   const [transmission, setTransmission] = useState('');
   const [fuelType, setFuelType] = useState('');
   const [engineCapacity, setEngineCapacity] = useState('');
+  const [category, setCategory] = useState(categories[0]);
 
   useEffect(() => {
     if (vehicle) {
@@ -36,6 +40,7 @@ export default function Edit() {
       setTransmission(vehicle.transmission || '');
       setFuelType(vehicle.fuelType || '');
       setEngineCapacity(vehicle.engineCapacity || '');
+      setCategory(vehicle.category || categories[0]);
     }
   }, [vehicle]);
 
@@ -65,8 +70,6 @@ export default function Edit() {
 
   return (
     <ScrollView style={tw`flex-1 bg-white p-5 pt-7`} contentContainerStyle={tw`pb-20`}>
-     
-
       <Text style={tw`text-xl font-bold mb-4`}>Edit Vehicle Details</Text>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Name</Text>
@@ -92,6 +95,18 @@ export default function Edit() {
         onChangeText={setPrice}
         placeholder="Price"
       />
+
+      <Text style={tw`text-sm font-semibold mb-1`}>Category</Text>
+      <View style={tw`border border-gray-300 rounded mb-4`}>
+        <Picker
+          selectedValue={category}
+          onValueChange={(itemValue) => setCategory(itemValue)}
+        >
+          {categories.map((cat) => (
+            <Picker.Item key={cat} label={cat} value={cat} />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Photo</Text>
       {imageUri ? (

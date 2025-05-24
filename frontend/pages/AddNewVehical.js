@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
+
+const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 
 export default function AddNewVehical() {
   const [name, setName] = useState('');
@@ -16,6 +19,7 @@ export default function AddNewVehical() {
   const [transmission, setTransmission] = useState('');
   const [fuelType, setFuelType] = useState('');
   const [engineCapacity, setEngineCapacity] = useState('');
+  const [category, setCategory] = useState(categories[0]);
 
   const handleSave = () => {
     Alert.alert('Saved', 'New vehicle has been added.');
@@ -36,6 +40,7 @@ export default function AddNewVehical() {
     setTransmission('');
     setFuelType('');
     setEngineCapacity('');
+    setCategory(categories[0]);
   };
 
   const pickImage = () => {
@@ -80,6 +85,18 @@ export default function AddNewVehical() {
         onChangeText={setPrice}
         placeholder="Price"
       />
+
+      <Text style={tw`text-sm font-semibold mb-1`}>Category</Text>
+      <View style={tw`border border-gray-300 rounded mb-4`}>
+        <Picker
+          selectedValue={category}
+          onValueChange={(itemValue) => setCategory(itemValue)}
+        >
+          {categories.map((cat) => (
+            <Picker.Item key={cat} label={cat} value={cat} />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Photo</Text>
       {imageUri ? (
