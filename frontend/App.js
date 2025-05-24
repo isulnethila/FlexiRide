@@ -14,6 +14,7 @@ import VehicleDetailsScreen from './pages/VehicleDetails';
 import NotificationScreen from './pages/Notification';
 import EditScreen from './pages/Edit';
 import AddNewVehicalScreen from './pages/AddNewVehical';
+import { FavoritesProvider } from './context/FavoritesContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -56,15 +57,17 @@ function MainTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Startup" component={StartupScreen} />
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
-        <Stack.Screen name="Notification" component={NotificationScreen} />
-        <Stack.Screen name="Edit" component={EditScreen} />
-        <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <FavoritesProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Startup" component={StartupScreen} />
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
+          <Stack.Screen name="Notification" component={NotificationScreen} />
+          <Stack.Screen name="Edit" component={EditScreen} />
+          <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </FavoritesProvider>
   );
 }

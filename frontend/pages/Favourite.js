@@ -1,10 +1,57 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import tw from 'twrnc';
+import { useFavorites } from '../context/FavoritesContext';
 
 export default function Favourite() {
-  return (
-    <View>
-      <Text>Favourite</Text>
+  const { favorites, removeFavorite } = useFavorites();
+
+  const renderItem = ({ item }) => (
+    <>
+    <Text style={tw`text-xl font-bold mt-6 mb-4 m-4 mt-8`}>Saved</Text>
+     <View style={tw`flex-row items-center p-4 border-b border-gray-200`}>
+      <Image source={{ uri: item.image }} style={tw`w-20 h-20 rounded mr-4`} />
+
+      <View style={tw`flex-1`}>
+        
+        <Text style={tw`text-lg font-semibold`}>{item.name}</Text>
+        <Text style={tw`text-gray-600`}>{item.details}</Text>
+        <Text style={tw`text-blue-600 font-bold`}>{item.price}</Text>
+      </View>
+      <TouchableOpacity onPress={() => removeFavorite(item.id)} style={tw`p-2`}>
+        <Text style={tw`text-red-600`}>Remove</Text>
+      </TouchableOpacity>
     </View>
-  )
+    </>
+   
+  );
+
+  if (favorites.length === 0) {
+    return (
+      <>
+      <Text style={tw`text-xl font-bold mt-6 mb-4 m-4 mt-8`}>Saved</Text>
+       <View style={tw`flex-1 justify-center items-center`}>
+        
+        <Text style={tw`text-gray-500 text-lg`}>No favorite vehicles added yet.</Text>
+      </View>
+      
+      </>
+     
+    );
+  }
+
+  return (
+    <>
+    
+    <FlatList
+      data={favorites}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+      contentContainerStyle={tw`p-4`}
+    />
+    
+    
+    </>
+    
+  );
 }
