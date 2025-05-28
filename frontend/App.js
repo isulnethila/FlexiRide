@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -16,6 +16,7 @@ import EditScreen from './pages/Edit';
 import AddNewVehicalScreen from './pages/AddNewVehical';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { RequestsProvider } from './context/RequestsContext';
+import { AuthProvider, AuthContext } from './context/AuthContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -56,23 +57,38 @@ function MainTabs() {
   );
 }
 
+function AppStack() {
+  const { isLoading } = useContext(AuthContext);
+
+  if (isLoading) {
+    // You can return a splash screen or loading indicator here
+    return null;
+  }
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
+      <Stack.Screen name="Notification" component={NotificationScreen} />
+      <Stack.Screen name="Edit" component={EditScreen} />
+      <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
+      <Stack.Screen name="Login" component={require('./pages/Login').default} />
+      <Stack.Screen name="SignUp" component={require('./pages/SignUp').default} />
+      <Stack.Screen name="Startup" component={StartupScreen} />
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <FavoritesProvider>
-      <RequestsProvider>
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Startup" component={StartupScreen} />
-            <Stack.Screen name="MainTabs" component={MainTabs} />
-            <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
-            <Stack.Screen name="Notification" component={NotificationScreen} />
-            <Stack.Screen name="Edit" component={EditScreen} />
-            <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
-            <Stack.Screen name="Login" component={require('./pages/Login').default} />
-            <Stack.Screen name="SignUp" component={require('./pages/SignUp').default} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </RequestsProvider>
-    </FavoritesProvider>
+    <AuthProvider>
+      <FavoritesProvider>
+        <RequestsProvider>
+          <NavigationContainer>
+            <AppStack />
+          </NavigationContainer>
+        </RequestsProvider>
+      </FavoritesProvider>
+    </AuthProvider>
   );
 }

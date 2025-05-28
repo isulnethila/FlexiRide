@@ -1,63 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Home() {
   const navigation = useNavigation();
+  const { userToken } = useContext(AuthContext);
   const [vehicles, setVehicles] = useState([]);
   const [nearbyVehicles, setNearbyVehicles] = useState([]);
 
   useEffect(() => {
-    // Load popular vehicles
-    const popularVehicles = [
-      { 
-        id: '1', 
-        name: 'Sedan', 
-        details: '4-seater',
-        price: '$45/day',
-        image: 'https://cdn-icons-png.flaticon.com/512/2251/2251826.png'
-      },
-      { 
-        id: '2', 
-        name: 'SUV', 
-        details: '7-seater',
-        price: '$65/day',
-        image: 'https://cdn-icons-png.flaticon.com/512/3079/3079017.png'
-      },
-      { 
-        id: '3', 
-        name: 'Convertible', 
-        details: '2-seater',
-        price: '$75/day',
-        image: 'https://cdn-icons-png.flaticon.com/512/744/744465.png'
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch('http://192.168.253.7:8080/api/vehicles', {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // Assuming data has popular and nearby vehicles arrays
+          setVehicles(data.popular || []);
+          setNearbyVehicles(data.nearby || []);
+        } else {
+          console.log('Failed to fetch vehicles');
+        }
+      } catch (error) {
+        console.log('Error fetching vehicles:', error);
       }
-    ];
+    };
 
-    // Load nearby vehicles
-    const nearby = [
-      { 
-        id: '4', 
-        name: 'Pickup Truck', 
-        details: 'Hauling',
-        price: '$60/day',
-        image: 'https://cdn-icons-png.flaticon.com/512/3663/3663374.png',
-        distance: '0.5 mi'
-      },
-      { 
-        id: '5', 
-        name: 'Minivan', 
-        details: 'Family',
-        price: '$55/day',
-        image: 'https://cdn-icons-png.flaticon.com/512/2489/2489223.png',
-        distance: '1.2 mi'
-      }
-    ];
-
-    setVehicles(popularVehicles);
-    setNearbyVehicles(nearby);
-  }, []);
+    if (userToken) {
+      fetchVehicles();
+    }
+  }, [userToken]);
 
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString('en-US', {
