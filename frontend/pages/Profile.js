@@ -10,6 +10,7 @@ export default function Profile() {
   const navigation = useNavigation();
   const { requests, removeRequest, updateRequestStatus } = useRequests();
   const { loggedIn, username } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
 
   const handleAccept = (id) => {
     updateRequestStatus(id, 'Accepted');
@@ -33,7 +34,15 @@ export default function Profile() {
 
       <View style={tw`border border-gray-400 rounded p-4 mb-6`}>
         {loggedIn ? (
-          <Text style={tw`text-lg mb-3`}>Hello, {username}!</Text>
+          <>
+            <Text style={tw`text-lg mb-3`}>Hello, {username}!</Text>
+            <TouchableOpacity
+              style={tw`bg-red-600 px-4 py-2 rounded w-24`}
+              onPress={logout}
+            >
+              <Text style={tw`text-white text-center`}>Logout</Text>
+            </TouchableOpacity>
+          </>
         ) : (
           <>
             <Text style={tw`text-lg mb-3`}>Hello, welcome to FlexiRide!</Text>
