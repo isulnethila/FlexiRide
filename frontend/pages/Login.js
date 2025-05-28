@@ -23,7 +23,7 @@ export default function Login() {
       if (response.ok) {
         const text = await response.text();
         if (text === 'Login successful') {
-          login();
+          login(username);
           navigation.reset({
             index: 0,
             routes: [{ name: 'MainTabs' }],
