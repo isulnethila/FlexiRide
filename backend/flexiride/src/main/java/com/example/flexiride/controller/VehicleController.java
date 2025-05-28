@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/vehicles")
+@CrossOrigin(origins = "*")
 public class VehicleController {
 
     @Autowired
@@ -41,9 +42,19 @@ public class VehicleController {
         Optional<Vehicle> vehicleOptional = vehicleService.getVehicleById(id);
         if (vehicleOptional.isPresent()) {
             Vehicle vehicle = vehicleOptional.get();
-            vehicle.setMake(vehicleDetails.getMake());
+            vehicle.setName(vehicleDetails.getName());
+            vehicle.setDetails(vehicleDetails.getDetails());
+            vehicle.setPrice(vehicleDetails.getPrice());
+            vehicle.setCategory(vehicleDetails.getCategory());
+            vehicle.setImageUri(vehicleDetails.getImageUri());
+            vehicle.setBrandName(vehicleDetails.getBrandName());
+            vehicle.setLocation(vehicleDetails.getLocation());
+            vehicle.setSeatCount(vehicleDetails.getSeatCount());
             vehicle.setModel(vehicleDetails.getModel());
-            vehicle.setYear(vehicleDetails.getYear());
+            vehicle.setYearOfManufacture(vehicleDetails.getYearOfManufacture());
+            vehicle.setTransmission(vehicleDetails.getTransmission());
+            vehicle.setFuelType(vehicleDetails.getFuelType());
+            vehicle.setEngineCapacity(vehicleDetails.getEngineCapacity());
             Vehicle updatedVehicle = vehicleService.saveVehicle(vehicle);
             return ResponseEntity.ok(updatedVehicle);
         } else {
