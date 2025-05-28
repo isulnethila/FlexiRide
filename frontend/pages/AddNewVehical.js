@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
-import { launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 
@@ -20,6 +20,17 @@ export default function AddNewVehical() {
   const [fuelType, setFuelType] = useState('');
   const [engineCapacity, setEngineCapacity] = useState('');
   const [category, setCategory] = useState(categories[0]);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permission Denied', 'Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
 
   const handleSave = async () => {
     const vehicleData = {
@@ -75,19 +86,19 @@ export default function AddNewVehical() {
     setCategory(categories[0]);
   };
 
-  const pickImage = () => {
-    launchImageLibrary(
-      { mediaType: 'photo', quality: 1 },
-      (response) => {
-        if (response.didCancel) {
-          // User cancelled image picker
-        } else if (response.errorCode) {
-          Alert.alert('Error', response.errorMessage || 'ImagePicker Error');
-        } else if (response.assets && response.assets.length > 0) {
-          setImageUri(response.assets[0].uri);
-        }
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setImageUri(result.assets[0].uri);
       }
-    );
+    } catch (error) {
+      Alert.alert('Error', 'Failed to select image');
+    }
   };
 
   return (
