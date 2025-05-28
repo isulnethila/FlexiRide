@@ -21,13 +21,45 @@ export default function AddNewVehical() {
   const [engineCapacity, setEngineCapacity] = useState('');
   const [category, setCategory] = useState(categories[0]);
 
-  const handleSave = () => {
-    Alert.alert('Saved', 'New vehicle has been added.');
-    // Placeholder: Add backend integration here later
+  const handleSave = async () => {
+    const vehicleData = {
+      name,
+      details,
+      price,
+      imageUri,
+      brandName,
+      location,
+      seatCount: seatCount ? parseInt(seatCount) : 0,
+      model,
+      yearOfManufacture: yearOfManufacture ? parseInt(yearOfManufacture) : 0,
+      transmission,
+      fuelType,
+      engineCapacity,
+      category,
+    };
+
+    try {
+      const response = await fetch('http://192.168.253.7:8080/api/vehicles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(vehicleData),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'New vehicle has been added.');
+        handleCancel();
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'Failed to add vehicle.');
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Failed to add vehicle.');
+    }
   };
 
   const handleCancel = () => {
-    // Clear all fields
     setName('');
     setDetails('');
     setPrice('');
