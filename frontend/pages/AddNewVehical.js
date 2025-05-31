@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, Plat
 import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import * as ImagePicker from 'expo-image-picker';
+import API_BASE_URL from '../config/apiConfig';
 
 const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 
@@ -32,7 +33,8 @@ export default function AddNewVehical() {
     })();
   }, []);
 
-  const handleSave = async () => {
+
+const handleSave = async () => {
     const vehicleData = {
       name,
       details,
@@ -50,7 +52,7 @@ export default function AddNewVehical() {
     };
 
     try {
-      const response = await fetch('http://192.168.253.7:8080/api/vehicles', {
+      const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

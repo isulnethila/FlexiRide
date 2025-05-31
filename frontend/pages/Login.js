@@ -3,6 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
+import API_BASE_URL from '../config/apiConfig';
+
 
 export default function Login() {
   const navigation = useNavigation();
@@ -12,7 +14,7 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://192.168.253.7:8080/api/users/login', {
+      const response = await fetch(`${API_BASE_URL}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
