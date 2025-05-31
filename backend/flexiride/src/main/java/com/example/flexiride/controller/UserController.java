@@ -47,6 +47,8 @@ public class UserController {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             user.setPassword(userDetails.getPassword()); // In real app, hash password
+            user.setCity(userDetails.getCity());
+            user.setDistrict(userDetails.getDistrict());
             User updatedUser = userService.saveUser(user);
             return ResponseEntity.ok(updatedUser);
         } else {

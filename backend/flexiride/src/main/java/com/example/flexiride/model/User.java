@@ -16,13 +16,18 @@ public class User {
     private String email;
     private String password;
 
+    private String city;
+    private String district;
+
     public User() {
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String city, String district) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.city = city;
+        this.district = district;
     }
 
     public Long getId() {
@@ -55,5 +60,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 }
