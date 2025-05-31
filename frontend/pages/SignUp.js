@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
+import API_BASE_URL from '../config/apiConfig';
 
 const districts = [
   "Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara",
@@ -13,13 +14,18 @@ const districts = [
 
 export default function SignUp() {
   const navigation = useNavigation();
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
+    if (!username) {
+      Alert.alert('Error', 'Please enter a username');
+      return;
+    }
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
@@ -32,13 +38,48 @@ export default function SignUp() {
       Alert.alert('Error', 'Please select a district');
       return;
     }
-    // Placeholder for sign up logic
-    Alert.alert('Sign Up', `Email: ${email}\nPassword: ${password}\nCity: ${city}\nDistrict: ${district}`);
+
+    const userData = {
+      username,
+      email,
+      password,
+      city,
+      district
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/users/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'User registered successfully');
+        navigation.navigate('Login');
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'Failed to register user');
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Failed to register user');
+    }
   };
 
   return (
     <View style={tw`flex-1 justify-center p-6 bg-white`}>
       <Text style={tw`text-3xl font-bold mb-6 text-center`}>Sign Up</Text>
+
+      <Text style={tw`mb-2 font-semibold`}>Username</Text>
+      <TextInput
+        style={tw`border border-gray-300 rounded p-3 mb-4`}
+        placeholder="Enter your username"
+        autoCapitalize="none"
+        value={username}
+        onChangeText={setUsername}
+      />
 
       <Text style={tw`mb-2 font-semibold`}>Email</Text>
       <TextInput
