@@ -6,6 +6,12 @@ import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
+const districts = [
+  "Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara",
+  "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Mullaitivu", "Vavuniya", "Trincomalee",
+  "Batticaloa", "Ampara", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla",
+  "Monaragala", "Ratnapura", "Kegalle"
+];
 
 export default function Edit() {
   const navigation = useNavigation();
@@ -17,7 +23,8 @@ export default function Edit() {
   const [price, setPrice] = useState('');
   const [imageUri, setImageUri] = useState('');
   const [brandName, setBrandName] = useState('');
-  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [district, setDistrict] = useState('');
   const [seatCount, setSeatCount] = useState('');
   const [model, setModel] = useState('');
   const [yearOfManufacture, setYearOfManufacture] = useState('');
@@ -31,9 +38,10 @@ export default function Edit() {
       setName(vehicle.name || '');
       setDetails(vehicle.details || '');
       setPrice(vehicle.price || '');
-      setImageUri(vehicle.image || '');
+      setImageUri(vehicle.imageUri || '');
       setBrandName(vehicle.brandName || '');
-      setLocation(vehicle.location || '');
+      setCity(vehicle.city || '');
+      setDistrict(vehicle.district || '');
       setSeatCount(vehicle.seatCount ? String(vehicle.seatCount) : '');
       setModel(vehicle.model || '');
       setYearOfManufacture(vehicle.yearOfManufacture ? String(vehicle.yearOfManufacture) : '');
@@ -45,7 +53,8 @@ export default function Edit() {
   }, [vehicle]);
 
   const handleSave = () => {
-    Alert.alert('Saved', 'Vehicle details have been saved.');
+    // Here you would typically send the updated vehicle data to the backend
+    Alert.alert('Saved', `Vehicle details have been saved.\nCity: ${city}\nDistrict: ${district}`);
     navigation.goBack();
   };
 
@@ -131,13 +140,26 @@ export default function Edit() {
         placeholder="Brand Name"
       />
 
-      <Text style={tw`text-sm font-semibold mb-1`}>Location</Text>
+      <Text style={tw`text-sm font-semibold mb-1`}>City</Text>
       <TextInput
         style={tw`border border-gray-300 rounded p-2 mb-4`}
-        value={location}
-        onChangeText={setLocation}
-        placeholder="Location"
+        value={city}
+        onChangeText={setCity}
+        placeholder="City"
       />
+
+      <Text style={tw`text-sm font-semibold mb-1`}>District</Text>
+      <View style={tw`border border-gray-300 rounded mb-6`}>
+        <Picker
+          selectedValue={district}
+          onValueChange={(itemValue) => setDistrict(itemValue)}
+        >
+          <Picker.Item label="Select a district" value="" />
+          {districts.map((dist) => (
+            <Picker.Item key={dist} label={dist} value={dist} />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Seat Count</Text>
       <TextInput

@@ -48,7 +48,8 @@ public class VehicleController {
             vehicle.setCategory(vehicleDetails.getCategory());
             vehicle.setImageUri(vehicleDetails.getImageUri());
             vehicle.setBrandName(vehicleDetails.getBrandName());
-            vehicle.setLocation(vehicleDetails.getLocation());
+            vehicle.setCity(vehicleDetails.getCity());
+            vehicle.setDistrict(vehicleDetails.getDistrict());
             vehicle.setSeatCount(vehicleDetails.getSeatCount());
             vehicle.setModel(vehicleDetails.getModel());
             vehicle.setYearOfManufacture(vehicleDetails.getYearOfManufacture());

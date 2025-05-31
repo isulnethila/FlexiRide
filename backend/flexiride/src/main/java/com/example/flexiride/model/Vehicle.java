@@ -18,7 +18,8 @@ public class Vehicle {
     private String category;
     private String imageUri;
     private String brandName;
-    private String location;
+    private String city;
+    private String district;
     private Integer seatCount;
     private String model;
     private Integer yearOfManufacture;
@@ -29,14 +30,15 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public Vehicle(String name, String details, String price, String category, String imageUri, String brandName, String location, Integer seatCount, String model, Integer yearOfManufacture, String transmission, String fuelType, String engineCapacity) {
+    public Vehicle(String name, String details, String price, String category, String imageUri, String brandName, String city, String district, Integer seatCount, String model, Integer yearOfManufacture, String transmission, String fuelType, String engineCapacity) {
         this.name = name;
         this.details = details;
         this.price = price;
         this.category = category;
         this.imageUri = imageUri;
         this.brandName = brandName;
-        this.location = location;
+        this.city = city;
+        this.district = district;
         this.seatCount = seatCount;
         this.model = model;
         this.yearOfManufacture = yearOfManufacture;
@@ -101,12 +103,20 @@ public class Vehicle {
         this.brandName = brandName;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCity() {
+        return city;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public Integer getSeatCount() {
