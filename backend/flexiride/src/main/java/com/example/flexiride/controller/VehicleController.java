@@ -1,7 +1,9 @@
 package com.example.flexiride.controller;
 
 import com.example.flexiride.model.Vehicle;
+import com.example.flexiride.model.User;
 import com.example.flexiride.service.VehicleService;
+import com.example.flexiride.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ public class VehicleController {
 
     @Autowired
     private VehicleService vehicleService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public List<Vehicle> getAllVehicles() {
@@ -33,8 +38,17 @@ public class VehicleController {
     }
 
     @PostMapping
-    public Vehicle createVehicle(@RequestBody Vehicle vehicle) {
-        return vehicleService.saveVehicle(vehicle);
+    public ResponseEntity<?> createVehicle(@RequestBody Vehicle vehicle) {
+        if (vehicle.getUser() == null || vehicle.getUser().getUsername() == null) {
+            return ResponseEntity.badRequest().body("Username must be provided");
+        }
+        Optional<User> userOptional = userService.findByUsername(vehicle.getUser().getUsername());
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.badRequest().body("Invalid Username");
+        }
+        vehicle.setUser(userOptional.get());
+        Vehicle savedVehicle = vehicleService.saveVehicle(vehicle);
+        return ResponseEntity.ok(savedVehicle);
     }
 
     @PutMapping("/{id}")

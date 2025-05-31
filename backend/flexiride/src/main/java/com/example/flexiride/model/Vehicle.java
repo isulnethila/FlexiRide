@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class Vehicle {
@@ -27,10 +29,14 @@ public class Vehicle {
     private String fuelType;
     private String engineCapacity;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Vehicle() {
     }
 
-    public Vehicle(String name, String details, String price, String category, String imageUri, String brandName, String city, String district, Integer seatCount, String model, Integer yearOfManufacture, String transmission, String fuelType, String engineCapacity) {
+    public Vehicle(String name, String details, String price, String category, String imageUri, String brandName, String city, String district, Integer seatCount, String model, Integer yearOfManufacture, String transmission, String fuelType, String engineCapacity, User user) {
         this.name = name;
         this.details = details;
         this.price = price;
@@ -45,6 +51,7 @@ public class Vehicle {
         this.transmission = transmission;
         this.fuelType = fuelType;
         this.engineCapacity = engineCapacity;
+        this.user = user;
     }
 
     public Long getId() {
@@ -165,5 +172,13 @@ public class Vehicle {
 
     public void setEngineCapacity(String engineCapacity) {
         this.engineCapacity = engineCapacity;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

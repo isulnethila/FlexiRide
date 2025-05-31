@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, Image, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import * as ImagePicker from 'expo-image-picker';
 import API_BASE_URL from '../config/apiConfig';
+import { AuthContext } from '../context/AuthContext';
 
 const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 const districts = [
@@ -28,6 +29,7 @@ export default function AddNewVehical() {
   const [fuelType, setFuelType] = useState('');
   const [engineCapacity, setEngineCapacity] = useState('');
   const [category, setCategory] = useState(categories[0]);
+  const { loggedIn, username } = React.useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -40,44 +42,51 @@ export default function AddNewVehical() {
     })();
   }, []);
 
-  const handleSave = async () => {
-    const vehicleData = {
-      name,
-      details,
-      price,
-      imageUri,
-      brandName,
-      city,
-      district,
-      seatCount: seatCount ? parseInt(seatCount) : 0,
-      model,
-      yearOfManufacture: yearOfManufacture ? parseInt(yearOfManufacture) : 0,
-      transmission,
-      fuelType,
-      engineCapacity,
-      category,
+    const handleSave = async () => {
+        if (!loggedIn) {
+            Alert.alert('Error', 'You must be logged in to add a new vehicle.');
+            return;
+        }
+        const vehicleData = {
+            name,
+            details,
+            price,
+            imageUri,
+            brandName,
+            city,
+            district,
+            seatCount: seatCount ? parseInt(seatCount) : 0,
+            model,
+            yearOfManufacture: yearOfManufacture ? parseInt(yearOfManufacture) : 0,
+            transmission,
+            fuelType,
+            engineCapacity,
+            category,
+            user: {
+                username: username
+            }
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(vehicleData),
+            });
+
+            if (response.ok) {
+                Alert.alert('Success', 'New vehicle has been added.');
+                handleCancel();
+            } else {
+                const errorData = await response.json();
+                Alert.alert('Error', errorData.message || 'Failed to add vehicle.');
+            }
+        } catch (error) {
+            Alert.alert('Error', error.message || 'Failed to add vehicle.');
+        }
     };
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(vehicleData),
-      });
-
-      if (response.ok) {
-        Alert.alert('Success', 'New vehicle has been added.');
-        handleCancel();
-      } else {
-        const errorData = await response.json();
-        Alert.alert('Error', errorData.message || 'Failed to add vehicle.');
-      }
-    } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to add vehicle.');
-    }
-  };
 
   const handleCancel = () => {
     setName('');
