@@ -6,6 +6,12 @@ import * as ImagePicker from 'expo-image-picker';
 import API_BASE_URL from '../config/apiConfig';
 
 const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
+const districts = [
+  "Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya", "Galle", "Matara",
+  "Hambantota", "Jaffna", "Kilinochchi", "Mannar", "Mullaitivu", "Vavuniya", "Trincomalee",
+  "Batticaloa", "Ampara", "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", "Badulla",
+  "Monaragala", "Ratnapura", "Kegalle"
+];
 
 export default function AddNewVehical() {
   const [name, setName] = useState('');
@@ -13,7 +19,8 @@ export default function AddNewVehical() {
   const [price, setPrice] = useState('');
   const [imageUri, setImageUri] = useState('');
   const [brandName, setBrandName] = useState('');
-  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [district, setDistrict] = useState('');
   const [seatCount, setSeatCount] = useState('');
   const [model, setModel] = useState('');
   const [yearOfManufacture, setYearOfManufacture] = useState('');
@@ -33,15 +40,15 @@ export default function AddNewVehical() {
     })();
   }, []);
 
-
-const handleSave = async () => {
+  const handleSave = async () => {
     const vehicleData = {
       name,
       details,
       price,
       imageUri,
       brandName,
-      location,
+      city,
+      district,
       seatCount: seatCount ? parseInt(seatCount) : 0,
       model,
       yearOfManufacture: yearOfManufacture ? parseInt(yearOfManufacture) : 0,
@@ -78,7 +85,8 @@ const handleSave = async () => {
     setPrice('');
     setImageUri('');
     setBrandName('');
-    setLocation('');
+    setCity('');
+    setDistrict('');
     setSeatCount('');
     setModel('');
     setYearOfManufacture('');
@@ -166,13 +174,26 @@ const handleSave = async () => {
         placeholder="Brand Name"
       />
 
-      <Text style={tw`text-sm font-semibold mb-1`}>Location</Text>
+      <Text style={tw`text-sm font-semibold mb-1`}>City</Text>
       <TextInput
         style={tw`border border-gray-300 rounded p-2 mb-4`}
-        value={location}
-        onChangeText={setLocation}
-        placeholder="Location"
+        value={city}
+        onChangeText={setCity}
+        placeholder="City"
       />
+
+      <Text style={tw`text-sm font-semibold mb-1`}>District</Text>
+      <View style={tw`border border-gray-300 rounded mb-6`}>
+        <Picker
+          selectedValue={district}
+          onValueChange={(itemValue) => setDistrict(itemValue)}
+        >
+          <Picker.Item label="Select a district" value="" />
+          {districts.map((dist) => (
+            <Picker.Item key={dist} label={dist} value={dist} />
+          ))}
+        </Picker>
+      </View>
 
       <Text style={tw`text-sm font-semibold mb-1`}>Seat Count</Text>
       <TextInput
