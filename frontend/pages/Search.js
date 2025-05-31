@@ -1,38 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, FlatList, Image } from 'react-native';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import API_BASE_URL from '../config/apiConfig';
+
 
 const filters = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
-
-const mockVehicles = [
-  { 
-    id: '1', 
-    name: 'Pickup Truck', 
-    details: 'Hauling',
-    price: '$60/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/3663/3663374.png',
-    distance: '0.5 mi',
-    category: 'Trucks'
-  },
-  { 
-    id: '2', 
-    name: 'Minivan', 
-    details: 'Family',
-    price: '$55/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/2489/2489223.png',
-    distance: '1.2 mi',
-    category: 'Vans'
-  }
-];
 
 export default function Search() {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState(null);
+  const [vehicles, setVehicles] = useState([]);
 
-  const filteredVehicles = mockVehicles.filter(vehicle => {
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/vehicles`)
+      .then(response => response.json())
+      .then(data => setVehicles(data))
+      .catch(error => console.error('Error fetching vehicles:', error));
+  }, []);
+
+  const filteredVehicles = vehicles.filter(vehicle => {
     const matchesCategory = selectedFilter ? vehicle.category === selectedFilter : true;
     const matchesSearch = vehicle.name.toLowerCase().includes(searchText.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -46,7 +35,7 @@ export default function Search() {
       <View style={tw`flex-row justify-between items-center`}>
         <View style={tw`flex-row flex-1`}>
           <Image 
-            source={{ uri: item.image }} 
+            source={{ uri: item.imageUri }} 
             style={tw`w-20 h-30 mr-3`}
             resizeMode="contain"
           />
@@ -54,9 +43,6 @@ export default function Search() {
             <Text style={tw`font-bold text-gray-900`}>{item.name}</Text>
             <Text style={tw`font-bold text-blue-600`}>{item.price}</Text>
             <Text style={tw`text-xs text-gray-500`}>{item.details}</Text>
-            {item.distance && (
-              <Text style={tw`text-xs text-gray-400 mt-1`}>{item.distance} away</Text>
-            )}
           </View>
         </View>
       </View>
@@ -99,7 +85,7 @@ export default function Search() {
 
       <FlatList
         data={filteredVehicles}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
       />
