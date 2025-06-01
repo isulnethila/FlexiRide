@@ -38,18 +38,22 @@ export default function Add() {
   const [vehicles, setVehicles] = useState([]);
 
   useEffect(() => {
-    if (loggedIn && username) {
-      fetch(`${API_BASE_URL}/api/vehicles/user/${username}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch user vehicles');
-          }
-          return response.json();
-        })
-        .then(data => setVehicles(data))
-        .catch(error => Alert.alert('Error', error.message));
-    }
-  }, [loggedIn, username]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (loggedIn && username) {
+        fetch(`${API_BASE_URL}/api/vehicles/user/${username}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch user vehicles');
+            }
+            return response.json();
+          })
+          .then(data => setVehicles(data))
+          .catch(error => Alert.alert('Error', error.message));
+      }
+    });
+
+    return unsubscribe;
+  }, [loggedIn, username, navigation]);
 
   const handleEditPress = (vehicle) => {
     navigation.navigate('Edit', { vehicle });

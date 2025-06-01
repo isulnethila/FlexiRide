@@ -4,6 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 import tw from 'twrnc';
 import { launchImageLibrary } from 'react-native-image-picker';
+import API_BASE_URL from '../config/apiConfig';
+
 
 const categories = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 const districts = [
@@ -52,10 +54,49 @@ export default function Edit() {
     }
   }, [vehicle]);
 
-  const handleSave = () => {
-    // Here you would typically send the updated vehicle data to the backend
-    Alert.alert('Saved', `Vehicle details have been saved.\nCity: ${city}\nDistrict: ${district}`);
-    navigation.goBack();
+  const handleSave = async () => {
+    if (!vehicle || !vehicle.id) {
+      Alert.alert('Error', 'Invalid vehicle data');
+      return;
+    }
+    const updatedVehicle = {
+      id: vehicle.id,
+      name,
+      details,
+      price,
+      category,
+      imageUri,
+      brandName,
+      city,
+      district,
+      seatCount: seatCount ? parseInt(seatCount) : 0,
+      model,
+      yearOfManufacture: yearOfManufacture ? parseInt(yearOfManufacture) : 0,
+      transmission,
+      fuelType,
+      engineCapacity,
+      user: vehicle.user, // keep existing user association
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/vehicles/${vehicle.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedVehicle),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Vehicle details have been updated.');
+        navigation.goBack();
+      } else {
+        const errorData = await response.json();
+        Alert.alert('Error', errorData.message || 'Failed to update vehicle.');
+      }
+    } catch (error) {
+      Alert.alert('Error', error.message || 'Failed to update vehicle.');
+    }
   };
 
   const handleCancel = () => {
