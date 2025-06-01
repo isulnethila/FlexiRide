@@ -49,6 +49,9 @@ export default function Add() {
           })
           .then(data => setVehicles(data))
           .catch(error => Alert.alert('Error', error.message));
+      } else {
+        // Clear vehicles when user is logged out
+        setVehicles([]);
       }
     });
 
