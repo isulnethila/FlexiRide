@@ -37,6 +37,16 @@ public class VehicleController {
         }
     }
 
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<Vehicle>> getVehiclesByUsername(@PathVariable String username) {
+        Optional<User> userOptional = userService.findByUsername(username);
+        if (!userOptional.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Vehicle> vehicles = vehicleService.getVehiclesByUser(userOptional.get());
+        return ResponseEntity.ok(vehicles);
+    }
+
     @PostMapping
     public ResponseEntity<?> createVehicle(@RequestBody Vehicle vehicle) {
         if (vehicle.getUser() == null || vehicle.getUser().getUsername() == null) {

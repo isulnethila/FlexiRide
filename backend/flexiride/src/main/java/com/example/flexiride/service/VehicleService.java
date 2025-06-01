@@ -1,6 +1,7 @@
 package com.example.flexiride.service;
 
 import com.example.flexiride.model.Vehicle;
+import com.example.flexiride.model.User;
 import com.example.flexiride.repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class VehicleService {
 
     public Optional<Vehicle> getVehicleById(Long id) {
         return vehicleRepository.findById(id);
+    }
+
+    public List<Vehicle> getVehiclesByUser(User user) {
+        return vehicleRepository.findByUser(user);
     }
 
     public Vehicle saveVehicle(Vehicle vehicle) {

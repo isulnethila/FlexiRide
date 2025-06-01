@@ -1,26 +1,9 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
-
-const mockVehicles = [
-  { 
-    id: '1', 
-    name: 'Pickup Truck', 
-    details: 'Hauling',
-    price: '$60/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/3663/3663374.png',
-    distance: '0.5 mi'
-  },
-  { 
-    id: '2', 
-    name: 'Minivan', 
-    details: 'Family',
-    price: '$55/day',
-    image: 'https://cdn-icons-png.flaticon.com/512/2489/2489223.png',
-    distance: '1.2 mi'
-  }
-];
+import { AuthContext } from '../context/AuthContext';
+import API_BASE_URL from '../config/apiConfig';
 
 const VehicleCard = ({ vehicle, onEditPress }) => (
   <View 
@@ -29,7 +12,7 @@ const VehicleCard = ({ vehicle, onEditPress }) => (
     <View style={tw`flex-row justify-between items-center`}>
       <View style={tw`flex-row flex-1`}>
         <Image 
-          source={{ uri: vehicle.image }} 
+          source={{ uri: vehicle.imageUri }} 
           style={tw`w-20 h-30 mr-3`}
           resizeMode="contain"
         />
@@ -37,9 +20,6 @@ const VehicleCard = ({ vehicle, onEditPress }) => (
           <Text style={tw`font-bold text-gray-900`}>{vehicle.name}</Text>
           <Text style={tw`font-bold text-blue-600`}>{vehicle.price}</Text>
           <Text style={tw`text-xs text-gray-500`}>{vehicle.details}</Text>
-          {vehicle.distance && (
-            <Text style={tw`text-xs text-gray-400 mt-1`}>{vehicle.distance} away</Text>
-          )}
         </View>
       </View>
       <TouchableOpacity
@@ -54,6 +34,22 @@ const VehicleCard = ({ vehicle, onEditPress }) => (
 
 export default function Add() {
   const navigation = useNavigation();
+  const { loggedIn, username } = useContext(AuthContext);
+  const [vehicles, setVehicles] = useState([]);
+
+  useEffect(() => {
+    if (loggedIn && username) {
+      fetch(`${API_BASE_URL}/api/vehicles/user/${username}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch user vehicles');
+          }
+          return response.json();
+        })
+        .then(data => setVehicles(data))
+        .catch(error => Alert.alert('Error', error.message));
+    }
+  }, [loggedIn, username]);
 
   const handleEditPress = (vehicle) => {
     navigation.navigate('Edit', { vehicle });
@@ -63,14 +59,14 @@ export default function Add() {
     <View style={tw`flex-1 bg-white p-5 pt-7`}>
       <Text style={tw`text-lg font-semibold mb-2 text-gray-900`}>My vehicles</Text>
       <FlatList
-        data={mockVehicles}
+        data={vehicles}
         renderItem={({ item }) => (
           <VehicleCard 
             vehicle={item} 
             onEditPress={() => handleEditPress(item)} 
           />
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id.toString()}
         showsVerticalScrollIndicator={false}
       />
       <TouchableOpacity
