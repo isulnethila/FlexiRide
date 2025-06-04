@@ -1,36 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { useFavorites } from '../context/FavoritesContext';
+import { useNavigation } from '@react-navigation/native';
+
 
 export default function VehicleDetails({ route }) {
-  const { vehicle } = route.params;
+    const navigation = useNavigation();
+   const { vehicle } = route.params;
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
-  const [pickupDate, setPickupDate] = useState(new Date());
-  const [returnDate, setReturnDate] = useState(new Date());
-  const [showPickupPicker, setShowPickupPicker] = useState(false);
-  const [showReturnPicker, setShowReturnPicker] = useState(false);
 
-  const onPickupChange = (event, selectedDate) => {
-    setShowPickupPicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      setPickupDate(selectedDate);
-    }
-  };
 
-  const onReturnChange = (event, selectedDate) => {
-    setShowReturnPicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      setReturnDate(selectedDate);
-    }
-  };
-
-  const formatDate = (date) => {
-    return date.toLocaleDateString();
-  };
 
   const toggleFavorite = () => {
     if (isFavorite(vehicle.id)) {
@@ -44,7 +26,7 @@ export default function VehicleDetails({ route }) {
     <ScrollView style={tw`flex-1 bg-white p-4 mt-5`}>
       <Text style={tw`text-3xl font-bold mb-4 `}>{vehicle.name}</Text>
       <Image 
-        source={{ uri: vehicle.image }} 
+        source={{ uri: vehicle.imageUri }} 
         style={tw`w-full h-48 mb-4 rounded-lg`}
         resizeMode="contain"
       />
@@ -81,54 +63,28 @@ export default function VehicleDetails({ route }) {
         <Text style={tw`text-sm text-gray-600 mb-2`}>Engine Capacity: {vehicle.engineCapacity}</Text>
       )}
 
-      {/* Schedule Section */}
-      <Text style={tw`text-xl font-bold mt-6 mb-4`}>Schedule</Text>
-      <View style={tw`flex-row justify-between`}>
-        <TouchableOpacity
-          style={tw`border border-gray-400 rounded p-4 w-1/2 mr-2`}
-          onPress={() => setShowPickupPicker(true)}
-        >
-          <Text style={tw`text-gray-500`}>Pickup Date</Text>
-          <Text style={tw`mt-2 text-lg`}>{formatDate(pickupDate)}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={tw`border border-gray-400 rounded p-4 w-1/2 ml-2`}
-          onPress={() => setShowReturnPicker(true)}
-        >
-          <Text style={tw`text-gray-500`}>Return Date</Text>
-          <Text style={tw`mt-2 text-lg`}>{formatDate(returnDate)}</Text>
-        </TouchableOpacity>
-      </View>
+     
 
-      {showPickupPicker && (
-        <DateTimePicker
-          value={pickupDate}
-          mode="date"
-          display="default"
-          onChange={onPickupChange}
-          minimumDate={new Date()}
-        />
-      )}
-      {showReturnPicker && (
-        <DateTimePicker
-          value={returnDate}
-          mode="date"
-          display="default"
-          onChange={onReturnChange}
-          minimumDate={pickupDate}
-        />
-      )}
+      <View style={tw`flex-row justify-between items-center pt-10`}>
+  <TouchableOpacity
+    style={tw`bg-gray-800 px-4 py-2 rounded w-40`}
+     onPress={() => navigation.navigate('Schedule', { vehicle })}
+  >
+    <Text style={tw`text-white text-center`}>Schedule</Text>
+  </TouchableOpacity>
 
-      <TouchableOpacity
-        style={tw`self-end mt-6 p-2 bg-white rounded-full shadow`}
-        onPress={toggleFavorite}
-      >
-        <Ionicons
-          name={isFavorite(vehicle.id) ? 'heart' : 'heart-outline'}
-          size={28}
-          color={isFavorite(vehicle.id) ? 'red' : 'gray'}
-        />
-      </TouchableOpacity>
+  <TouchableOpacity
+    style={tw`bg-white p-2 rounded-full shadow`}
+    onPress={toggleFavorite}
+  >
+    <Ionicons
+      name={isFavorite(vehicle.id) ? 'heart' : 'heart-outline'}
+      size={28}
+      color={isFavorite(vehicle.id) ? 'red' : 'gray'}
+    />
+  </TouchableOpacity>
+</View>
+     
     </ScrollView>
   );
 }

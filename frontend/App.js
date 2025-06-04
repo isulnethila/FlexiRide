@@ -14,6 +14,7 @@ import VehicleDetailsScreen from './pages/VehicleDetails';
 import NotificationScreen from './pages/Notification';
 import EditScreen from './pages/Edit';
 import AddNewVehicalScreen from './pages/AddNewVehical';
+import Schedule from './pages/Schedule';
 import { FavoritesProvider } from './context/FavoritesContext';
 import { RequestsProvider } from './context/RequestsContext';
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -70,6 +71,7 @@ function AppStack() {
       <Stack.Screen name="MainTabs" component={MainTabs} />
       <Stack.Screen name="VehicleDetails" component={VehicleDetailsScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
+      <Stack.Screen name="Schedule" component={Schedule} />
       <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="AddNewVehical" component={AddNewVehicalScreen} />
       <Stack.Screen name="Login" component={require('./pages/Login').default} />
