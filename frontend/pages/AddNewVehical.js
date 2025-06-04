@@ -140,7 +140,7 @@ export default function AddNewVehical() {
         placeholder="Details"
       />
 
-      <Text style={tw`text-sm font-semibold mb-1`}>Price</Text>
+      <Text style={tw`text-sm font-semibold mb-1`}>Price per day</Text>
       <TextInput
         style={tw`border border-gray-300 rounded p-2 mb-4`}
         value={price}

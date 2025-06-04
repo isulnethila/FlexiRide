@@ -31,7 +31,7 @@ export default function VehicleDetails({ route }) {
         resizeMode="contain"
       />
       <Text style={tw`text-lg mb-2`}>{vehicle.details}</Text>
-      <Text style={tw`text-lg font-semibold mb-2`}>Price: {vehicle.price}</Text>
+      <Text style={tw`text-lg font-semibold mb-2`}>Price per day: {vehicle.price}</Text>
       {vehicle.category && (
         <Text style={tw`text-sm text-gray-600 mb-2`}>Category: {vehicle.category}</Text>
       )}
