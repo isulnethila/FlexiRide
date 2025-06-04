@@ -82,9 +82,6 @@ export default function Schedule({ route }) {
 
       </View>
 
-
-
-
       <TouchableOpacity
         style={tw`bg-black  px-4 py-2 rounded w-40 mt-90 self-center `}
        // onPress={() => navigation.navigate('Schedule', { vehicle })}
