@@ -13,7 +13,7 @@ export default function Favourite({ navigation }) {
       onPress={() => navigation.navigate('VehicleDetails', { vehicle: item })}
       style={tw`flex-row items-center p-4 border-b border-gray-200`}
     >
-      <Image source={{ uri: item.image }} style={tw`w-20 h-20 rounded mr-4`} />
+      <Image source={{ uri: item.imageUri }} style={tw`w-20 h-20 rounded mr-4`} />
       <View style={tw`flex-1`}>
         <Text style={tw`text-lg font-semibold`}>{item.name}</Text>
         <Text style={tw`text-gray-600`}>{item.details}</Text>

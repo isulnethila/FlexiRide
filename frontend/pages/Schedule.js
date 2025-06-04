@@ -1,4 +1,4 @@
-import { View, Text,TouchableOpacity,TextInput} from 'react-native'
+import { View, Text,TouchableOpacity,TextInput, Platform } from 'react-native'
 import React,{ useState } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import tw from 'twrnc';
@@ -53,14 +53,14 @@ export default function Schedule() {
         
       </View>
       <View >
-        <Text style={tw`text-lg mt-4`}>Phone number:</Text>
+        <Text style={tw`text-lg mt-4 mb-2`}>Phone number:</Text>
          <TextInput
         style={tw`border border-gray-300 rounded p-2 mb-4`}
         value={name}
         onChangeText={setName}
-        placeholder="Name"
+        placeholder="Enter your phone number"
       />
-        <Text  style={tw`text-lg mt-4`}> Cost:</Text>
+        <Text  style={tw`text-lg mt-1`}> Cost:</Text>
 
         <Text  style={tw`text-lg mt-4`}> Set pick up time:</Text>
        </View>
