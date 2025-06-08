@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, Platform } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { useFavorites } from '../context/FavoritesContext';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../context/AuthContext';
 
 
 export default function VehicleDetails({ route }) {
     const navigation = useNavigation();
    const { vehicle } = route.params;
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
-
+  const { loggedIn } = useContext(AuthContext);
 
 
 
@@ -68,7 +69,14 @@ export default function VehicleDetails({ route }) {
       <View style={tw`flex-row justify-between items-center pt-10`}>
   <TouchableOpacity
     style={tw`bg-gray-800 px-4 py-2 rounded w-40`}
-     onPress={() => navigation.navigate('Schedule', { vehicle })}
+    onPress={() => {
+      // Check if user is logged in before navigating
+      if (loggedIn) {
+        navigation.navigate('Schedule', { vehicle });
+      } else {
+        navigation.navigate('Login');
+      }
+    }}
   >
     <Text style={tw`text-white text-center`}>Schedule</Text>
   </TouchableOpacity>

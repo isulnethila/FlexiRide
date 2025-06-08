@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, FlatList, Image } from 'react-native';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import API_BASE_URL from '../config/apiConfig';
+import { AuthContext } from '../context/AuthContext';
 
 
 const filters = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 
 export default function Search() {
   const navigation = useNavigation();
+  const { username } = useContext(AuthContext);
   const [searchText, setSearchText] = useState('');
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [vehicles, setVehicles] = useState([]);
@@ -24,7 +26,9 @@ export default function Search() {
   const filteredVehicles = vehicles.filter(vehicle => {
     const matchesCategory = selectedFilter ? vehicle.category === selectedFilter : true;
     const matchesSearch = vehicle.name.toLowerCase().includes(searchText.toLowerCase());
-    return matchesCategory && matchesSearch;
+    // Exclude vehicles owned by the current user
+    const isNotUserVehicle = vehicle.owner !== username; // Assuming vehicle has an 'owner' field and username is available
+    return matchesCategory && matchesSearch && isNotUserVehicle;
   });
 
   const renderItem = ({ item }) => (

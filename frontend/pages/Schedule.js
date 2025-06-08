@@ -1,11 +1,14 @@
 import { View, Text, TouchableOpacity, TextInput, Platform, Button } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import tw from 'twrnc';
+import API_BASE_URL from '../config/apiConfig';
+import { AuthContext } from '../context/AuthContext';
 
 
 export default function Schedule({ route }) {
   const { vehicle } = route.params;
+  const { username } = useContext(AuthContext);
   const [pickupDate, setPickupDate] = useState(new Date());
   const [returnDate, setReturnDate] = useState(new Date());
   const [showPickupPicker, setShowPickupPicker] = useState(false);
@@ -84,7 +87,35 @@ export default function Schedule({ route }) {
 
       <TouchableOpacity
         style={tw`bg-black  px-4 py-2 rounded w-40 mt-90 self-center `}
-       // onPress={() => navigation.navigate('Schedule', { vehicle })}
+        onPress={async () => {
+          try {
+            const scheduleData = {
+              user: username, // Use logged-in username from AuthContext
+              vehicle: vehicle.name,
+              pickupDate: pickupDate.toISOString().split('T')[0],
+              returnDate: returnDate.toISOString().split('T')[0],
+              pickupTime: pickupTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              cost: Math.round(totalCost),
+              phoneNumber: name,
+            };
+
+            const response = await fetch(`${API_BASE_URL}/api/schedule`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(scheduleData),
+            });
+
+            if (response.ok) {
+              alert('Schedule booked successfully!');
+            } else {
+              alert('Failed to book schedule.');
+            }
+          } catch (error) {
+            alert('Error booking schedule: ' + error.message);
+          }
+        }}
       >
         <Text style={tw`text-white text-center text-lg`}>Book now</Text>
       </TouchableOpacity>
