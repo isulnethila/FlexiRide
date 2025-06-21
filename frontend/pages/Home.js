@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import tw from 'twrnc';
 import { AuthContext } from '../context/AuthContext';
+import API_BASE_URL from '../config/apiConfig';
 
 export default function Home() {
   const navigation = useNavigation();
@@ -15,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/users/profile?username=${username}`);
+        const response = await fetch(`${API_BASE_URL}/api/users/profile?username=${username}`);
         if (response.ok) {
           const userData = await response.json();
           setUserDistrict(userData.district);
@@ -35,21 +36,19 @@ export default function Home() {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/vehicles', {
+        let url = `${API_BASE_URL}/api/vehicles`;
+        if (userDistrict) {
+          url = `${API_BASE_URL}/api/vehicles/district/${userDistrict}`;
+        }
+        const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
         });
         if (response.ok) {
           const data = await response.json();
-          setVehicles(data.popular || []);
-          if (userDistrict) {
-            // Filter nearby vehicles by user district
-            const filteredNearby = (data.nearby || []).filter(vehicle => vehicle.district === userDistrict);
-            setNearbyVehicles(filteredNearby);
-          } else {
-            setNearbyVehicles(data.nearby || []);
-          }
+          setVehicles([]);
+          setNearbyVehicles(data);
         } else {
           console.log('Failed to fetch vehicles');
         }
@@ -108,8 +107,6 @@ export default function Home() {
       </TouchableOpacity>
       </View>
       <Text style={tw`text-xs text-gray-500 mb-3`}>{formattedDate}</Text>
-
-      
 
       {/* Near You Section */}
       <View style={tw`flex-1`}>

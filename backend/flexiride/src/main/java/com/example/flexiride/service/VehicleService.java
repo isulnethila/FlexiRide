@@ -27,6 +27,10 @@ public class VehicleService {
         return vehicleRepository.findByUser(user);
     }
 
+    public List<Vehicle> getVehiclesByDistrict(String district) {
+        return vehicleRepository.findByDistrict(district);
+    }
+
     public Vehicle saveVehicle(Vehicle vehicle) {
         return vehicleRepository.save(vehicle);
     }

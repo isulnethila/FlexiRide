@@ -47,6 +47,12 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    @GetMapping("/district/{district}")
+    public ResponseEntity<List<Vehicle>> getVehiclesByDistrict(@PathVariable String district) {
+        List<Vehicle> vehicles = vehicleService.getVehiclesByDistrict(district);
+        return ResponseEntity.ok(vehicles);
+    }
+
     @PostMapping
     public ResponseEntity<?> createVehicle(@RequestBody Vehicle vehicle) {
         if (vehicle.getUser() == null || vehicle.getUser().getUsername() == null) {
