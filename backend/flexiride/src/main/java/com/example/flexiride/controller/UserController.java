@@ -39,6 +39,12 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<User> getUserProfileByUsername(@RequestParam String username) {
+        Optional<User> user = userService.findByUsername(username);
+        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUserProfile(@PathVariable Long id, @RequestBody User userDetails) {
         Optional<User> userOptional = userService.getUserById(id);

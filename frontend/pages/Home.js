@@ -7,23 +7,49 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function Home() {
   const navigation = useNavigation();
-  const { userToken } = useContext(AuthContext);
+  const { userToken, username } = useContext(AuthContext);
   const [vehicles, setVehicles] = useState([]);
   const [nearbyVehicles, setNearbyVehicles] = useState([]);
+  const [userDistrict, setUserDistrict] = useState(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/users/profile?username=${username}`);
+        if (response.ok) {
+          const userData = await response.json();
+          setUserDistrict(userData.district);
+        } else {
+          console.log('Failed to fetch user profile');
+        }
+      } catch (error) {
+        console.log('Error fetching user profile:', error);
+      }
+    };
+
+    if (username) {
+      fetchUserProfile();
+    }
+  }, [username]);
 
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await fetch('http://192.168.253.7:8080/api/vehicles', {
+        const response = await fetch('http://localhost:8080/api/vehicles', {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
         });
         if (response.ok) {
           const data = await response.json();
-          // Assuming data has popular and nearby vehicles arrays
           setVehicles(data.popular || []);
-          setNearbyVehicles(data.nearby || []);
+          if (userDistrict) {
+            // Filter nearby vehicles by user district
+            const filteredNearby = (data.nearby || []).filter(vehicle => vehicle.district === userDistrict);
+            setNearbyVehicles(filteredNearby);
+          } else {
+            setNearbyVehicles(data.nearby || []);
+          }
         } else {
           console.log('Failed to fetch vehicles');
         }
@@ -32,10 +58,8 @@ export default function Home() {
       }
     };
 
-    if (userToken) {
-      fetchVehicles();
-    }
-  }, [userToken]);
+    fetchVehicles();
+  }, [userToken, userDistrict]);
 
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString('en-US', {
@@ -85,19 +109,7 @@ export default function Home() {
       </View>
       <Text style={tw`text-xs text-gray-500 mb-3`}>{formattedDate}</Text>
 
-      {/* Popular Rentals */}
-      <View style={tw`mb-4`}>
-        <Text style={tw`text-lg font-semibold mb-2 text-gray-900`}>Popular Rentals</Text>
-        <ScrollView 
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={tw`pb-1`}
-        >
-          {vehicles.map(vehicle => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} horizontal />
-          ))}
-        </ScrollView>
-      </View>
+      
 
       {/* Near You Section */}
       <View style={tw`flex-1`}>

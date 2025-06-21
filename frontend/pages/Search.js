@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import API_BASE_URL from '../config/apiConfig';
 import { AuthContext } from '../context/AuthContext';
 
-
 const filters = ['Cars', 'Vans', 'Bikes', 'Trucks', 'SUVs', 'Electric'];
 
 export default function Search() {
