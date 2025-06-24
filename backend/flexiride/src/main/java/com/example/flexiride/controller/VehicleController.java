@@ -4,12 +4,14 @@ import com.example.flexiride.model.Vehicle;
 import com.example.flexiride.model.User;
 import com.example.flexiride.service.VehicleService;
 import com.example.flexiride.service.UserService;
+import com.example.flexiride.dto.VehicleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/vehicles")
@@ -48,9 +50,27 @@ public class VehicleController {
     }
 
     @GetMapping("/district/{district}")
-    public ResponseEntity<List<Vehicle>> getVehiclesByDistrict(@PathVariable String district) {
+    public ResponseEntity<List<VehicleDTO>> getVehiclesByDistrict(@PathVariable String district) {
         List<Vehicle> vehicles = vehicleService.getVehiclesByDistrict(district);
-        return ResponseEntity.ok(vehicles);
+        List<VehicleDTO> vehicleDTOs = vehicles.stream().map(vehicle -> new VehicleDTO(
+                vehicle.getId(),
+                vehicle.getName(),
+                vehicle.getDetails(),
+                vehicle.getPrice(),
+                vehicle.getCategory(),
+                vehicle.getImageUri(),
+                vehicle.getBrandName(),
+                vehicle.getCity(),
+                vehicle.getDistrict(),
+                vehicle.getSeatCount(),
+                vehicle.getModel(),
+                vehicle.getYearOfManufacture(),
+                vehicle.getTransmission(),
+                vehicle.getFuelType(),
+                vehicle.getEngineCapacity(),
+                vehicle.getUser() != null ? vehicle.getUser().getUsername() : null
+        )).collect(Collectors.toList());
+        return ResponseEntity.ok(vehicleDTOs);
     }
 
     @PostMapping

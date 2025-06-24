@@ -45,6 +45,12 @@ export default function VehicleDetails({ route }) {
       {vehicle.location && (
         <Text style={tw`text-sm text-gray-600 mb-2`}>Location: {vehicle.location}</Text>
       )}
+      {vehicle.city && (
+        <Text style={tw`text-sm text-gray-600 mb-2`}>City: {vehicle.city}</Text>
+      )}
+      {vehicle.district && (
+        <Text style={tw`text-sm text-gray-600 mb-2`}>District: {vehicle.district}</Text>
+      )}
       {vehicle.seatCount && (
         <Text style={tw`text-sm text-gray-600 mb-2`}>Seat Count: {vehicle.seatCount}</Text>
       )}
