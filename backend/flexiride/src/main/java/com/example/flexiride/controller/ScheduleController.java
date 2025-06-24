@@ -18,8 +18,15 @@ import com.example.flexiride.service.ScheduleService;
 import com.example.flexiride.model.Schedule;
 import com.example.flexiride.model.User;
 import com.example.flexiride.service.UserService;
+import com.example.flexiride.service.NotificationService;
+import com.example.flexiride.model.Notification;
+
+
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/schedule")
 @CrossOrigin(origins = "*")
@@ -30,6 +37,9 @@ public class ScheduleController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping
     public List<Schedule> getAllSchedules(){
@@ -59,6 +69,23 @@ public class ScheduleController {
     @PostMapping
     public ResponseEntity<Schedule> createSchedule(@RequestBody Schedule schedule) {
         Schedule createdSchedule = scheduleService.saveSchedule(schedule);
+
+        // Create notification after schedule is saved
+        Notification notification = new Notification();
+        notification.setId(UUID.randomUUID().toString());
+        notification.setType("Booking");
+        notification.setMessage("New booking created");
+        notification.setStatus("Pending");
+        notification.setUserId(schedule.getUser());
+        notification.setVehicleOwnerId(schedule.getVehicleUserId());
+        notification.setPhoneNumber(schedule.getPhoneNumber());
+        notification.setCost(schedule.getCost());
+        notification.setPickupDate(schedule.getPickupDate().toString());
+        notification.setReturnDate(schedule.getReturnDate().toString());
+        notification.setPickupTime(schedule.getPickupTime());
+
+        notificationService.saveNotification(notification);
+
         return new ResponseEntity<>(createdSchedule, HttpStatus.CREATED);
     }
 

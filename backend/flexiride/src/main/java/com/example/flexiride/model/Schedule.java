@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class Schedule {
@@ -16,6 +18,11 @@ public class Schedule {
 
     private String user;
     private String vehicle;
+
+    @Column(name = "vehicle_user_id")
+    @JsonProperty("vehicleUserId")
+    private String vehicleUserId;
+
     private Date pickupDate;
     private Date returnDate;
     private String pickupTime;
@@ -25,10 +32,11 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(String user, String vehicle, Date pickupDate, Date returnDate, String pickupTime, int cost,
+    public Schedule(String user, String vehicle, String vehicleUserId, Date pickupDate, Date returnDate, String pickupTime, int cost,
             String phoneNumber) {
         this.user = user;
         this.vehicle = vehicle;
+        this.vehicleUserId = vehicleUserId;
         this.pickupDate = pickupDate;
         this.returnDate = returnDate;
         this.pickupTime = pickupTime;
@@ -46,6 +54,10 @@ public class Schedule {
 
     public String getVehicle() {
         return vehicle;
+    }
+
+    public String getVehicleUserId() {
+        return vehicleUserId;
     }
 
     public Date getPickupDate() {
@@ -80,6 +92,10 @@ public class Schedule {
         this.vehicle = vehicle;
     }
 
+    public void setVehicleUserId(String vehicleUserId) {
+        this.vehicleUserId = vehicleUserId;
+    }
+
     public void setPickupDate(Date pickupDate) {
         this.pickupDate = pickupDate;
     }
@@ -99,7 +115,4 @@ public class Schedule {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    
-    
-    
 }

@@ -91,7 +91,8 @@ export default function Schedule({ route }) {
           try {
             const scheduleData = {
               user: username, // Use logged-in username from AuthContext
-              vehicle: vehicle.name,
+              vehicle: vehicle.id, // send vehicle id instead of name
+              vehicleUserId: vehicle.user_id, // added vehicle user id
               pickupDate: pickupDate.toISOString().split('T')[0],
               returnDate: returnDate.toISOString().split('T')[0],
               pickupTime: pickupTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
