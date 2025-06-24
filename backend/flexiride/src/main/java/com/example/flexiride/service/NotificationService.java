@@ -22,6 +22,10 @@ public class NotificationService {
         return notificationRepository.findById(id);
     }
 
+    public List<Notification> getNotificationsByUserId(String userId) {
+        return notificationRepository.findByUserId(userId);
+    }
+
     public Notification saveNotification(Notification notification) {
         return notificationRepository.save(notification);
     }

@@ -1,30 +1,26 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from './AuthContext';
+import API_BASE_URL from '../config/apiConfig';
 
 const RequestsContext = createContext();
 
-const initialRequests = [
-  {
-    id: '1',
-    type: 'new',
-    message: 'You have a new rental request for your Toyota Prius from April 12–14.',
-    status: null,
-  },
-  {
-    id: '2',
-    type: 'pending',
-    message: 'Request for Honda Civic from April 12–14.',
-    status: 'Pending',
-  },
-  {
-    id: '3',
-    type: 'accepted',
-    message: 'Request for Honda Civic from April 12–14.',
-    status: 'Accepted',
-  },
-];
-
 export const RequestsProvider = ({ children }) => {
-  const [requests, setRequests] = useState(initialRequests);
+  const { user } = useAuth();
+  const [requests, setRequests] = useState([]);
+
+  useEffect(() => {
+    if (user && user.id) {
+      axios
+        .get(`${API_BASE_URL}/api/notifications/user/${user.id}`)
+        .then((response) => {
+          setRequests(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching notifications:', error);
+        });
+    }
+  }, [user]);
 
   const removeRequest = (id) => {
     setRequests((prev) => prev.filter((req) => req.id !== id));
