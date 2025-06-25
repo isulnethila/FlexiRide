@@ -109,6 +109,12 @@ export default function Notification() {
                 ? 'your vehicle is requested' 
                 : notif.message}
           </Text>
+          {notif.userId && (
+            <Text style={tw`mb-1 text-gray-600`}>Requeste user name: {notif.userId}</Text>
+          )}
+          {notif.vehicleOwnerId && (
+            <Text style={tw`mb-1 text-gray-600`}>Owner user name: {notif.vehicleOwnerId}</Text>
+          )}
           {notif.vehicleName && (
             <Text style={tw`mb-1 text-gray-600`}>Vehicle: {notif.vehicleName}</Text>
           )}

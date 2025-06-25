@@ -7,6 +7,8 @@ import com.example.flexiride.dto.NotificationWithUserNameDTO;
 import com.example.flexiride.model.User;
 import com.example.flexiride.repository.VehicleRepository;
 import com.example.flexiride.model.Vehicle;
+import com.example.flexiride.repository.RequestARRepository;
+import com.example.flexiride.model.RequestAR;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,9 @@ public class NotificationService {
 
     @Autowired
     private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private RequestARRepository requestARRepository;
 
     public List<Notification> getAllNotifications() {
         return notificationRepository.findAll();
@@ -97,6 +102,61 @@ public class NotificationService {
             Notification notification = notificationOpt.get();
             notification.setStatus("accepted");
             notificationRepository.save(notification);
+
+            // Save to request_a_r table
+            String vehicleOwnerUsername = "";
+            String requestUsername = "";
+            String vehicleName = notification.getVehicleName();
+            String pickupDate = notification.getPickupDate();
+            String returnDate = notification.getReturnDate();
+            Double cost = notification.getCost() != null ? notification.getCost().doubleValue() : 0.0;
+            String pickupTime = notification.getPickupTime();
+
+            // Get vehicle owner username
+            if (notification.getVehicleOwnerId() != null) {
+                try {
+                    Long vehicleOwnerIdLong = Long.parseLong(notification.getVehicleOwnerId());
+                    Optional<User> vehicleOwnerOpt = userService.getUserById(vehicleOwnerIdLong);
+                    if (vehicleOwnerOpt.isPresent()) {
+                        vehicleOwnerUsername = vehicleOwnerOpt.get().getUsername();
+                    }
+                } catch (NumberFormatException e) {
+                    // handle error
+                }
+            }
+            if (vehicleOwnerUsername == null) {
+                vehicleOwnerUsername = "";
+            }
+
+            // Get request username from notification DTO instead of Notification entity
+            // Since Notification entity does not have getUserName(), we use userId to get username
+            if (notification.getUserId() != null) {
+                try {
+                    Long userIdLong = Long.parseLong(notification.getUserId());
+                    Optional<User> userOpt = userService.getUserById(userIdLong);
+                    if (userOpt.isPresent()) {
+                        requestUsername = userOpt.get().getUsername();
+                    }
+                } catch (NumberFormatException e) {
+                    // handle error
+                }
+            }
+            if (requestUsername == null) {
+                requestUsername = "";
+            }
+
+            RequestAR requestAR = new RequestAR(
+                vehicleOwnerUsername,
+                requestUsername,
+                "user request is accepted",
+                vehicleName,
+                pickupDate,
+                returnDate,
+                cost,
+                pickupTime
+            );
+            requestARRepository.save(requestAR);
+
             return Optional.of(notification);
         }
         return Optional.empty();
@@ -108,9 +168,61 @@ public class NotificationService {
             Notification notification = notificationOpt.get();
             notification.setStatus("rejected");
             notificationRepository.save(notification);
+
+            // Save to request_a_r table
+            String vehicleOwnerUsername = "";
+            String requestUsername = "";
+            String vehicleName = notification.getVehicleName();
+            String pickupDate = notification.getPickupDate();
+            String returnDate = notification.getReturnDate();
+            Double cost = notification.getCost() != null ? notification.getCost().doubleValue() : 0.0;
+            String pickupTime = notification.getPickupTime();
+
+            // Get vehicle owner username
+            if (notification.getVehicleOwnerId() != null) {
+                try {
+                    Long vehicleOwnerIdLong = Long.parseLong(notification.getVehicleOwnerId());
+                    Optional<User> vehicleOwnerOpt = userService.getUserById(vehicleOwnerIdLong);
+                    if (vehicleOwnerOpt.isPresent()) {
+                        vehicleOwnerUsername = vehicleOwnerOpt.get().getUsername();
+                    }
+                } catch (NumberFormatException e) {
+                    // handle error
+                }
+            }
+
+            // Get request username
+            if (notification.getUserId() != null) {
+                try {
+                    Long userIdLong = Long.parseLong(notification.getUserId());
+                    Optional<User> userOpt = userService.getUserById(userIdLong);
+                    if (userOpt.isPresent()) {
+                        requestUsername = userOpt.get().getUsername();
+                    }
+                } catch (NumberFormatException e) {
+                    // handle error
+                }
+            }
+
+            RequestAR requestAR = new RequestAR(
+                vehicleOwnerUsername,
+                requestUsername,
+                "user request is reject",
+                vehicleName,
+                pickupDate,
+                returnDate,
+                cost,
+                pickupTime
+            );
+            requestARRepository.save(requestAR);
+
             return Optional.of(notification);
         }
         return Optional.empty();
     }
-}
+
+    // New method to create notification with userId and vehicleOwnerId
+    public Notification createNotification(Notification notification) {
+        return notificationRepository.save(notification);
+    }
 }
