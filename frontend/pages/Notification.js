@@ -32,7 +32,7 @@ export default function Notification() {
         ownerNotifications = await ownerResponse.json();
       }
 
-      // Merge and sort notifications by some criteria, e.g., date or id
+      // Merge user and vehicle owner notifications without filtering
       const mergedNotifications = [...userNotifications, ...ownerNotifications];
       // Optional: sort by id or other field if available
       setNotifications(mergedNotifications);
@@ -96,7 +96,13 @@ export default function Notification() {
             </Text>
           </View>
 
-          <Text style={tw`mb-4 text-gray-700`}>{notif.message}</Text>
+          <Text style={tw`mb-4 text-gray-700`}>
+            {notif.type === 'schedule' 
+              ? 'Your Schedule has been created successfully' 
+              : notif.type === 'vehicleRequest' 
+                ? 'your vehicle is requested' 
+                : notif.message}
+          </Text>
           {notif.vehicleName && (
             <Text style={tw`mb-1 text-gray-600`}>Vehicle: {notif.vehicleName}</Text>
           )}
