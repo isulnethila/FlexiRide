@@ -127,6 +127,50 @@ export default function Notification() {
           {notif.pickupTime && (
             <Text style={tw`mb-1 text-gray-600`}>Pickup Time: {notif.pickupTime}</Text>
           )}
+          <View style={tw`flex-row justify-end mt-2`}>
+            <TouchableOpacity
+              style={tw`bg-green-500 px-4 py-2 rounded mr-2`}
+              onPress={async () => {
+                try {
+                  const response = await fetch(`${API_BASE_URL}/api/notifications/${notif.id}/accept`, {
+                    method: 'POST',
+                  });
+                  if (response.ok) {
+                    Alert.alert('Success', 'Notification accepted.');
+                    // Remove notification from list
+                    setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+                  } else {
+                    Alert.alert('Error', 'Failed to accept notification.');
+                  }
+                } catch (error) {
+                  Alert.alert('Error', 'Failed to accept notification.');
+                }
+              }}
+            >
+              <Text style={tw`text-white font-semibold`}>Accept</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={tw`bg-red-500 px-4 py-2 rounded`}
+              onPress={async () => {
+                try {
+                  const response = await fetch(`${API_BASE_URL}/api/notifications/${notif.id}/reject`, {
+                    method: 'POST',
+                  });
+                  if (response.ok) {
+                    Alert.alert('Success', 'Notification rejected.');
+                    // Remove notification from list
+                    setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+                  } else {
+                    Alert.alert('Error', 'Failed to reject notification.');
+                  }
+                } catch (error) {
+                  Alert.alert('Error', 'Failed to reject notification.');
+                }
+              }}
+            >
+              <Text style={tw`text-white font-semibold`}>Reject</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ))}
     </ScrollView>

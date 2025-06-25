@@ -90,4 +90,27 @@ public class NotificationService {
             );
         }).collect(Collectors.toList());
     }
+
+    public Optional<Notification> acceptNotification(String id) {
+        Optional<Notification> notificationOpt = notificationRepository.findById(id);
+        if (notificationOpt.isPresent()) {
+            Notification notification = notificationOpt.get();
+            notification.setStatus("accepted");
+            notificationRepository.save(notification);
+            return Optional.of(notification);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Notification> rejectNotification(String id) {
+        Optional<Notification> notificationOpt = notificationRepository.findById(id);
+        if (notificationOpt.isPresent()) {
+            Notification notification = notificationOpt.get();
+            notification.setStatus("rejected");
+            notificationRepository.save(notification);
+            return Optional.of(notification);
+        }
+        return Optional.empty();
+    }
+}
 }

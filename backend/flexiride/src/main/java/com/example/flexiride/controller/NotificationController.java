@@ -73,4 +73,16 @@ public class NotificationController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<Notification> acceptNotification(@PathVariable String id) {
+        Optional<Notification> notificationOptional = notificationService.acceptNotification(id);
+        return notificationOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<Notification> rejectNotification(@PathVariable String id) {
+        Optional<Notification> notificationOptional = notificationService.rejectNotification(id);
+        return notificationOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
