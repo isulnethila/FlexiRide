@@ -5,6 +5,8 @@ import com.example.flexiride.repository.NotificationRepository;
 import com.example.flexiride.service.UserService;
 import com.example.flexiride.dto.NotificationWithUserNameDTO;
 import com.example.flexiride.model.User;
+import com.example.flexiride.repository.VehicleRepository;
+import com.example.flexiride.model.Vehicle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,9 @@ public class NotificationService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     public List<Notification> getAllNotifications() {
         return notificationRepository.findAll();
@@ -49,12 +54,20 @@ public class NotificationService {
         List<Notification> notifications = notificationRepository.findAll();
         return notifications.stream().map(notification -> {
             String userName = "";
+            String vehicleName = notification.getVehicleName();
             try {
                 if (notification.getVehicleOwnerId() != null) {
                     Long vehicleOwnerIdLong = Long.parseLong(notification.getVehicleOwnerId());
                     Optional<User> userOpt = userService.getUserById(vehicleOwnerIdLong);
                     if (userOpt.isPresent()) {
                         userName = userOpt.get().getUsername();
+                        // Enrich vehicleName for Vehicle Request notifications if null
+                        if ("Vehicle Request".equalsIgnoreCase(notification.getType()) && (vehicleName == null || vehicleName.isEmpty())) {
+                            List<Vehicle> vehicles = vehicleRepository.findByUser(userOpt.get());
+                            if (!vehicles.isEmpty()) {
+                                vehicleName = vehicles.get(0).getName();
+                            }
+                        }
                     }
                 }
             } catch (NumberFormatException e) {
@@ -72,7 +85,7 @@ public class NotificationService {
                 notification.getPickupDate(),
                 notification.getReturnDate(),
                 notification.getPickupTime(),
-                notification.getVehicleName(),
+                vehicleName,
                 userName
             );
         }).collect(Collectors.toList());
