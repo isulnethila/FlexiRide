@@ -50,7 +50,7 @@ public class ScheduleService {
                 if (owner != null) {
                     Notification notification = new Notification();
                     notification.setId(UUID.randomUUID().toString());
-                    notification.setType("Vehicle Request");
+                    notification.setType("vehicleRequest");
                     notification.setMessage("Your vehicle is requested");
                     notification.setStatus("Unread");
                     notification.setUserId(schedule.getUser());
@@ -60,6 +60,7 @@ public class ScheduleService {
                     notification.setPickupDate(schedule.getPickupDate().toString());
                     notification.setReturnDate(schedule.getReturnDate().toString());
                     notification.setPickupTime(schedule.getPickupTime());
+                    notification.setVehicleName(vehicle.getName());
                     notificationService.saveNotification(notification);
                 }
             }

@@ -79,7 +79,14 @@ public class ScheduleController {
         notification.setMessage("Your schedule has been created successfully.");
         notification.setType("Schedule");
         notification.setStatus("Unread");
-        notification.setVehicleOwnerId(schedule.getVehicleUserId());
+        // Validate and set vehicleOwnerId
+        String vehicleOwnerId = schedule.getVehicleUserId();
+        if (vehicleOwnerId == null || vehicleOwnerId.isEmpty()) {
+            // Log warning or handle missing vehicleOwnerId
+            vehicleOwnerId = "UnknownOwner";
+        }
+        notification.setVehicleOwnerId(vehicleOwnerId);
+
         notification.setPhoneNumber(schedule.getPhoneNumber());
         notification.setCost(schedule.getCost());
         notification.setPickupDate(schedule.getPickupDate() != null ? schedule.getPickupDate().toString() : null);
@@ -93,9 +100,12 @@ public class ScheduleController {
             Optional<Vehicle> vehicleOpt = vehicleService.getVehicleById(vehicleId);
             if (vehicleOpt.isPresent()) {
                 vehicleName = vehicleOpt.get().getName();
+            } else {
+                vehicleName = "UnknownVehicle";
             }
         } catch (NumberFormatException e) {
             // handle invalid vehicle format
+            vehicleName = "UnknownVehicle";
         }
         notification.setVehicleName(vehicleName);
 
@@ -127,7 +137,14 @@ public class ScheduleController {
         notification.setMessage("Your schedule has been updated successfully.");
         notification.setType("Schedule");
         notification.setStatus("Unread");
-        notification.setVehicleOwnerId(scheduleToUpdate.getVehicleUserId());
+        // Validate and set vehicleOwnerId
+        String vehicleOwnerId = scheduleToUpdate.getVehicleUserId();
+        if (vehicleOwnerId == null || vehicleOwnerId.isEmpty()) {
+            // Log warning or handle missing vehicleOwnerId
+            vehicleOwnerId = "UnknownOwner";
+        }
+        notification.setVehicleOwnerId(vehicleOwnerId);
+
         notification.setPhoneNumber(scheduleToUpdate.getPhoneNumber());
         notification.setCost(scheduleToUpdate.getCost());
         notification.setPickupDate(scheduleToUpdate.getPickupDate() != null ? scheduleToUpdate.getPickupDate().toString() : null);
@@ -141,9 +158,12 @@ public class ScheduleController {
             Optional<Vehicle> vehicleOpt = vehicleService.getVehicleById(vehicleId);
             if (vehicleOpt.isPresent()) {
                 vehicleName = vehicleOpt.get().getName();
+            } else {
+                vehicleName = "UnknownVehicle";
             }
         } catch (NumberFormatException e) {
             // handle invalid vehicle format
+            vehicleName = "UnknownVehicle";
         }
         notification.setVehicleName(vehicleName);
 
@@ -167,7 +187,14 @@ public class ScheduleController {
         notification.setMessage("Your schedule has been deleted successfully.");
         notification.setType("Schedule");
         notification.setStatus("Unread");
-        notification.setVehicleOwnerId(scheduleToDelete.getVehicleUserId());
+        // Validate and set vehicleOwnerId
+        String vehicleOwnerId = scheduleToDelete.getVehicleUserId();
+        if (vehicleOwnerId == null || vehicleOwnerId.isEmpty()) {
+            // Log warning or handle missing vehicleOwnerId
+            vehicleOwnerId = "UnknownOwner";
+        }
+        notification.setVehicleOwnerId(vehicleOwnerId);
+
         notification.setPhoneNumber(scheduleToDelete.getPhoneNumber());
         notification.setCost(scheduleToDelete.getCost());
         notification.setPickupDate(scheduleToDelete.getPickupDate() != null ? scheduleToDelete.getPickupDate().toString() : null);
@@ -181,9 +208,12 @@ public class ScheduleController {
             Optional<Vehicle> vehicleOpt = vehicleService.getVehicleById(vehicleId);
             if (vehicleOpt.isPresent()) {
                 vehicleName = vehicleOpt.get().getName();
+            } else {
+                vehicleName = "UnknownVehicle";
             }
         } catch (NumberFormatException e) {
             // handle invalid vehicle format
+            vehicleName = "UnknownVehicle";
         }
         notification.setVehicleName(vehicleName);
 
