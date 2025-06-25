@@ -25,15 +25,52 @@ public class VehicleController {
     private UserService userService;
 
     @GetMapping
-    public List<Vehicle> getAllVehicles() {
-        return vehicleService.getAllVehicles();
+    public List<VehicleDTO> getAllVehicles() {
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
+        return vehicles.stream().map(vehicle -> new VehicleDTO(
+                vehicle.getId(),
+                vehicle.getName(),
+                vehicle.getDetails(),
+                vehicle.getPrice(),
+                vehicle.getCategory(),
+                vehicle.getImageUri(),
+                vehicle.getBrandName(),
+                vehicle.getCity(),
+                vehicle.getDistrict(),
+                vehicle.getSeatCount(),
+                vehicle.getModel(),
+                vehicle.getYearOfManufacture(),
+                vehicle.getTransmission(),
+                vehicle.getFuelType(),
+                vehicle.getEngineCapacity(),
+                vehicle.getUser() != null ? vehicle.getUser().getUsername() : null
+        )).collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vehicle> getVehicleById(@PathVariable Long id) {
+    public ResponseEntity<VehicleDTO> getVehicleById(@PathVariable Long id) {
         Optional<Vehicle> vehicle = vehicleService.getVehicleById(id);
         if (vehicle.isPresent()) {
-            return ResponseEntity.ok(vehicle.get());
+            Vehicle v = vehicle.get();
+            VehicleDTO vehicleDTO = new VehicleDTO(
+                    v.getId(),
+                    v.getName(),
+                    v.getDetails(),
+                    v.getPrice(),
+                    v.getCategory(),
+                    v.getImageUri(),
+                    v.getBrandName(),
+                    v.getCity(),
+                    v.getDistrict(),
+                    v.getSeatCount(),
+                    v.getModel(),
+                    v.getYearOfManufacture(),
+                    v.getTransmission(),
+                    v.getFuelType(),
+                    v.getEngineCapacity(),
+                    v.getUser() != null ? v.getUser().getUsername() : null
+            );
+            return ResponseEntity.ok(vehicleDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -84,7 +121,25 @@ public class VehicleController {
         }
         vehicle.setUser(userOptional.get());
         Vehicle savedVehicle = vehicleService.saveVehicle(vehicle);
-        return ResponseEntity.ok(savedVehicle);
+        VehicleDTO vehicleDTO = new VehicleDTO(
+                savedVehicle.getId(),
+                savedVehicle.getName(),
+                savedVehicle.getDetails(),
+                savedVehicle.getPrice(),
+                savedVehicle.getCategory(),
+                savedVehicle.getImageUri(),
+                savedVehicle.getBrandName(),
+                savedVehicle.getCity(),
+                savedVehicle.getDistrict(),
+                savedVehicle.getSeatCount(),
+                savedVehicle.getModel(),
+                savedVehicle.getYearOfManufacture(),
+                savedVehicle.getTransmission(),
+                savedVehicle.getFuelType(),
+                savedVehicle.getEngineCapacity(),
+                savedVehicle.getUser() != null ? savedVehicle.getUser().getUsername() : null
+        );
+        return ResponseEntity.ok(vehicleDTO);
     }
 
     @PutMapping("/{id}")
