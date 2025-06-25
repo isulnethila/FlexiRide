@@ -32,6 +32,11 @@ public class NotificationController {
         return notificationService.getNotificationsByUserId(userId);
     }
 
+    @GetMapping("/vehicleOwner/{vehicleOwnerId}")
+    public List<Notification> getNotificationsByVehicleOwnerId(@PathVariable String vehicleOwnerId) {
+        return notificationService.getNotificationsByVehicleOwnerId(vehicleOwnerId);
+    }
+
     @PostMapping
     public Notification createNotification(@RequestBody Notification notification) {
         return notificationService.saveNotification(notification);

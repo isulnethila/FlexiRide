@@ -12,7 +12,7 @@ export const RequestsProvider = ({ children }) => {
   useEffect(() => {
     if (user && user.id) {
       axios
-        .get(`${API_BASE_URL}/api/notifications/user/${user.id}`)
+        .get(`${API_BASE_URL}/api/notifications/user/${user.id.toString()}`)
         .then((response) => {
           setRequests(response.data);
         })

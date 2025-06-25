@@ -1,29 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import tw from 'twrnc';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useRequests } from '../context/RequestsContext';
+import { useAuth } from '../context/AuthContext';
+import API_BASE_URL from '../config/apiConfig';
 
 export default function Notification() {
-  const { requests, removeRequest, updateRequestStatus } = useRequests();
+  const { username } = useAuth();
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAccept = (id) => {
-    updateRequestStatus(id, 'Accepted');
+  const fetchNotifications = async () => {
+    if (!username) {
+      setNotifications([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      const [userResponse, ownerResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/notifications/user/${username}`),
+        fetch(`${API_BASE_URL}/api/notifications/vehicleOwner/${username}`)
+      ]);
+
+      let userNotifications = [];
+      let ownerNotifications = [];
+
+      if (userResponse.ok) {
+        userNotifications = await userResponse.json();
+      }
+      if (ownerResponse.ok) {
+        ownerNotifications = await ownerResponse.json();
+      }
+
+      // Merge and sort notifications by some criteria, e.g., date or id
+      const mergedNotifications = [...userNotifications, ...ownerNotifications];
+      // Optional: sort by id or other field if available
+      setNotifications(mergedNotifications);
+    } catch (error) {
+      setNotifications([]);
+    }
+    setLoading(false);
   };
 
-  const handleReject = (id) => {
-    removeRequest(id);
-  };
+  useEffect(() => {
+    fetchNotifications();
+  }, [username]);
 
   const handleRemove = (id) => {
-    removeRequest(id);
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   };
 
   const handleSchedule = (id) => {
     Alert.alert('Schedule', 'Schedule your journey feature coming soon.');
   };
 
-  if (requests.length === 0) {
+  if (loading) {
+    return (
+      <View style={tw`flex-1 bg-white justify-center items-center`}>
+        <Text style={tw`text-xl font-bold`}>Loading Notifications...</Text>
+      </View>
+    );
+  }
+
+  if (notifications.length === 0) {
     return (
       <View style={tw`flex-1 bg-white justify-center items-center`}>
         <Text style={tw`text-xl font-bold`}>Notifications</Text>
@@ -38,14 +77,14 @@ export default function Notification() {
     <ScrollView style={tw`flex-1 bg-white p-4 mt-6`}>
       <Text style={tw`text-2xl font-bold mb-4`}>Notifications</Text>
 
-      {requests.map((req) => (
+      {notifications.map((notif) => (
         <View
-          key={req.id}
+          key={notif.id}
           style={tw`border border-gray-300 rounded p-4 mb-4 relative bg-gray-50`}
         >
           <TouchableOpacity
             style={tw`absolute top-2 right-2 p-1`}
-            onPress={() => removeRequest(req.id)}
+            onPress={() => handleRemove(notif.id)}
           >
             <Ionicons name="close" size={20} color="gray" />
           </TouchableOpacity>
@@ -53,55 +92,28 @@ export default function Notification() {
           <View style={tw`flex-row items-center mb-2`}>
             <Ionicons name="information-circle-outline" size={20} color="gray" />
             <Text style={tw`ml-2 text-gray-700 font-semibold`}>
-              {req.type === 'new' ? 'New Rental Request' : 'Your Request'}
+              Notification
             </Text>
           </View>
 
-          <Text style={tw`mb-4 text-gray-700`}>{req.message}</Text>
-
-          {req.type === 'new' && (
-            <View style={tw`flex-row`}>
-              <TouchableOpacity
-                style={tw`bg-green-600 px-4 py-2 rounded mr-3`}
-                onPress={() => handleAccept(req.id)}
-              >
-                <Text style={tw`text-white`}>Accept</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={tw`bg-red-600 px-4 py-2 rounded`}
-                onPress={() => handleReject(req.id)}
-              >
-                <Text style={tw`text-white`}>Reject</Text>
-              </TouchableOpacity>
-            </View>
+          <Text style={tw`mb-4 text-gray-700`}>{notif.message}</Text>
+          {notif.vehicleName && (
+            <Text style={tw`mb-1 text-gray-600`}>Vehicle: {notif.vehicleName}</Text>
           )}
-
-          {req.type === 'pending' && (
-            <View style={tw`flex-row`}>
-              <View style={tw`bg-yellow-400 px-4 py-2 rounded mr-3`}>
-                <Text style={tw`text-white`}>Pending</Text>
-              </View>
-              <TouchableOpacity
-                style={tw`bg-red-600 px-4 py-2 rounded`}
-                onPress={() => handleRemove(req.id)}
-              >
-                <Text style={tw`text-white`}>Remove</Text>
-              </TouchableOpacity>
-            </View>
+          {notif.phoneNumber && (
+            <Text style={tw`mb-1 text-gray-600`}>Phone: {notif.phoneNumber}</Text>
           )}
-
-          {req.type === 'accepted' && (
-            <View style={tw`flex-row`}>
-              <View style={tw`bg-green-600 px-4 py-2 rounded mr-3`}>
-                <Text style={tw`text-white`}>Accepted</Text>
-              </View>
-              <TouchableOpacity
-                style={tw`bg-blue-600 px-4 py-2 rounded`}
-                onPress={() => handleSchedule(req.id)}
-              >
-                <Text style={tw`text-white`}>Schedule your Journey</Text>
-              </TouchableOpacity>
-            </View>
+          {notif.pickupDate && (
+            <Text style={tw`mb-1 text-gray-600`}>Pickup Date: {notif.pickupDate}</Text>
+          )}
+          {notif.returnDate && (
+            <Text style={tw`mb-1 text-gray-600`}>Return Date: {notif.returnDate}</Text>
+          )}
+          {notif.cost !== undefined && (
+            <Text style={tw`mb-1 text-gray-600`}>Cost: ${notif.cost}</Text>
+          )}
+          {notif.pickupTime && (
+            <Text style={tw`mb-1 text-gray-600`}>Pickup Time: {notif.pickupTime}</Text>
           )}
         </View>
       ))}

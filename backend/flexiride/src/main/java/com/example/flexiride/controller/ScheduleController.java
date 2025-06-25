@@ -20,8 +20,8 @@ import com.example.flexiride.model.User;
 import com.example.flexiride.service.UserService;
 import com.example.flexiride.service.NotificationService;
 import com.example.flexiride.model.Notification;
-
-
+import com.example.flexiride.service.VehicleService;
+import com.example.flexiride.model.Vehicle;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +40,9 @@ public class ScheduleController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private VehicleService vehicleService;
 
     @GetMapping
     public List<Schedule> getAllSchedules(){
@@ -70,19 +73,31 @@ public class ScheduleController {
     public ResponseEntity<Schedule> createSchedule(@RequestBody Schedule schedule) {
         Schedule createdSchedule = scheduleService.saveSchedule(schedule);
 
-        // Create notification after schedule is saved
         Notification notification = new Notification();
-        notification.setId(UUID.randomUUID().toString());
-        notification.setType("Booking");
-        notification.setMessage("New booking created");
-        notification.setStatus("Pending");
+        notification.setId(java.util.UUID.randomUUID().toString());
         notification.setUserId(schedule.getUser());
+        notification.setMessage("Your schedule has been created successfully.");
+        notification.setType("Schedule");
+        notification.setStatus("Unread");
         notification.setVehicleOwnerId(schedule.getVehicleUserId());
         notification.setPhoneNumber(schedule.getPhoneNumber());
         notification.setCost(schedule.getCost());
-        notification.setPickupDate(schedule.getPickupDate().toString());
-        notification.setReturnDate(schedule.getReturnDate().toString());
+        notification.setPickupDate(schedule.getPickupDate() != null ? schedule.getPickupDate().toString() : null);
+        notification.setReturnDate(schedule.getReturnDate() != null ? schedule.getReturnDate().toString() : null);
         notification.setPickupTime(schedule.getPickupTime());
+
+        // Fetch vehicle name
+        String vehicleName = null;
+        try {
+            Long vehicleId = Long.parseLong(schedule.getVehicle());
+            Optional<Vehicle> vehicleOpt = vehicleService.getVehicleById(vehicleId);
+            if (vehicleOpt.isPresent()) {
+                vehicleName = vehicleOpt.get().getName();
+            }
+        } catch (NumberFormatException e) {
+            // handle invalid vehicle format
+        }
+        notification.setVehicleName(vehicleName);
 
         notificationService.saveNotification(notification);
 
@@ -105,6 +120,35 @@ public class ScheduleController {
         scheduleToUpdate.setPhoneNumber(scheduleDetails.getPhoneNumber());
 
         Schedule updatedSchedule = scheduleService.saveSchedule(scheduleToUpdate);
+
+        Notification notification = new Notification();
+        notification.setId(java.util.UUID.randomUUID().toString());
+        notification.setUserId(scheduleToUpdate.getUser());
+        notification.setMessage("Your schedule has been updated successfully.");
+        notification.setType("Schedule");
+        notification.setStatus("Unread");
+        notification.setVehicleOwnerId(scheduleToUpdate.getVehicleUserId());
+        notification.setPhoneNumber(scheduleToUpdate.getPhoneNumber());
+        notification.setCost(scheduleToUpdate.getCost());
+        notification.setPickupDate(scheduleToUpdate.getPickupDate() != null ? scheduleToUpdate.getPickupDate().toString() : null);
+        notification.setReturnDate(scheduleToUpdate.getReturnDate() != null ? scheduleToUpdate.getReturnDate().toString() : null);
+        notification.setPickupTime(scheduleToUpdate.getPickupTime());
+
+        // Fetch vehicle name
+        String vehicleName = null;
+        try {
+            Long vehicleId = Long.parseLong(scheduleToUpdate.getVehicle());
+            Optional<Vehicle> vehicleOpt = vehicleService.getVehicleById(vehicleId);
+            if (vehicleOpt.isPresent()) {
+                vehicleName = vehicleOpt.get().getName();
+            }
+        } catch (NumberFormatException e) {
+            // handle invalid vehicle format
+        }
+        notification.setVehicleName(vehicleName);
+
+        notificationService.saveNotification(notification);
+
         return ResponseEntity.ok(updatedSchedule);
     }
 
@@ -114,6 +158,37 @@ public class ScheduleController {
         if (!optionalSchedule.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        Schedule scheduleToDelete = optionalSchedule.get();
+
+        Notification notification = new Notification();
+        notification.setId(java.util.UUID.randomUUID().toString());
+        notification.setUserId(scheduleToDelete.getUser());
+        notification.setMessage("Your schedule has been deleted successfully.");
+        notification.setType("Schedule");
+        notification.setStatus("Unread");
+        notification.setVehicleOwnerId(scheduleToDelete.getVehicleUserId());
+        notification.setPhoneNumber(scheduleToDelete.getPhoneNumber());
+        notification.setCost(scheduleToDelete.getCost());
+        notification.setPickupDate(scheduleToDelete.getPickupDate() != null ? scheduleToDelete.getPickupDate().toString() : null);
+        notification.setReturnDate(scheduleToDelete.getReturnDate() != null ? scheduleToDelete.getReturnDate().toString() : null);
+        notification.setPickupTime(scheduleToDelete.getPickupTime());
+
+        // Fetch vehicle name
+        String vehicleName = null;
+        try {
+            Long vehicleId = Long.parseLong(scheduleToDelete.getVehicle());
+            Optional<Vehicle> vehicleOpt = vehicleService.getVehicleById(vehicleId);
+            if (vehicleOpt.isPresent()) {
+                vehicleName = vehicleOpt.get().getName();
+            }
+        } catch (NumberFormatException e) {
+            // handle invalid vehicle format
+        }
+        notification.setVehicleName(vehicleName);
+
+        notificationService.saveNotification(notification);
+
         scheduleService.deleteScheduleById(id);
         return ResponseEntity.noContent().build();
     }

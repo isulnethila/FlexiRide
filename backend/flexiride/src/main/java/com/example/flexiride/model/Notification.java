@@ -35,10 +35,13 @@ public class Notification {
     @Column(name = "pickup_time")
     private String pickupTime;
 
+    @Column(name = "vehicle_name")
+    private String vehicleName;
+
     public Notification() {
     }
 
-    public Notification(String id, String type, String message, String status, String userId, String vehicleOwnerId, String phoneNumber, Integer cost, String pickupDate, String returnDate, String pickupTime) {
+    public Notification(String id, String type, String message, String status, String userId, String vehicleOwnerId, String phoneNumber, Integer cost, String pickupDate, String returnDate, String pickupTime, String vehicleName) {
         this.id = id;
         this.type = type;
         this.message = message;
@@ -50,6 +53,7 @@ public class Notification {
         this.pickupDate = pickupDate;
         this.returnDate = returnDate;
         this.pickupTime = pickupTime;
+        this.vehicleName = vehicleName;
     }
 
     public String getId() {
@@ -138,5 +142,13 @@ public class Notification {
 
     public void setPickupTime(String pickupTime) {
         this.pickupTime = pickupTime;
+    }
+
+    public String getVehicleName() {
+        return vehicleName;
+    }
+
+    public void setVehicleName(String vehicleName) {
+        this.vehicleName = vehicleName;
     }
 }

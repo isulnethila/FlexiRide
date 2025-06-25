@@ -26,6 +26,10 @@ public class NotificationService {
         return notificationRepository.findByUserId(userId);
     }
 
+    public List<Notification> getNotificationsByVehicleOwnerId(String vehicleOwnerId) {
+        return notificationRepository.findByVehicleOwnerId(vehicleOwnerId);
+    }
+
     public Notification saveNotification(Notification notification) {
         return notificationRepository.save(notification);
     }
