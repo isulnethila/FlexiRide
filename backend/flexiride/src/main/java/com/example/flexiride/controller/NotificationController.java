@@ -2,6 +2,7 @@ package com.example.flexiride.controller;
 
 import com.example.flexiride.model.Notification;
 import com.example.flexiride.service.NotificationService;
+import com.example.flexiride.dto.NotificationWithUserNameDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,11 @@ public class NotificationController {
     @GetMapping
     public List<Notification> getAllNotifications() {
         return notificationService.getAllNotifications();
+    }
+
+    @GetMapping("/allWithUserName")
+    public List<NotificationWithUserNameDTO> getAllNotificationsWithUserName() {
+        return notificationService.getAllNotificationsWithUserName();
     }
 
     @GetMapping("/{id}")

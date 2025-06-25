@@ -17,25 +17,30 @@ export default function Notification() {
       return;
     }
     try {
-      const [userResponse, ownerResponse] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/notifications/user/${username}`),
-        fetch(`${API_BASE_URL}/api/notifications/vehicleOwner/${username}`)
-      ]);
-
-      let userNotifications = [];
-      let ownerNotifications = [];
-
-      if (userResponse.ok) {
-        userNotifications = await userResponse.json();
-      }
-      if (ownerResponse.ok) {
-        ownerNotifications = await ownerResponse.json();
+      // Fetch notifications where user is the user
+      const userRes = await fetch(`${API_BASE_URL}/api/notifications/allWithUserName`);
+      let allNotifications = [];
+      if (userRes.ok) {
+        const allWithUserName = await userRes.json();
+        // Filter for notifications where userName matches logged-in user
+        allNotifications = allWithUserName.filter(
+          (n) => n.userName === username
+        );
       }
 
-      // Merge user and vehicle owner notifications without filtering
-      const mergedNotifications = [...userNotifications, ...ownerNotifications];
-      // Optional: sort by id or other field if available
-      setNotifications(mergedNotifications);
+      // Fetch notifications where user is the vehicle owner
+      const ownerRes = await fetch(`${API_BASE_URL}/api/notifications/vehicleOwner/${username}`);
+      if (ownerRes.ok) {
+        const ownerNotifications = await ownerRes.json();
+        // If these notifications are not in allNotifications, add them
+        ownerNotifications.forEach((n) => {
+          if (!allNotifications.find((x) => x.id === n.id)) {
+            allNotifications.push(n);
+          }
+        });
+      }
+
+      setNotifications(allNotifications);
     } catch (error) {
       setNotifications([]);
     }
@@ -97,6 +102,7 @@ export default function Notification() {
           </View>
 
           <Text style={tw`mb-4 text-gray-700`}>
+            {notif.userName ? `User: ${notif.userName} - ` : ''}
             {notif.type === 'schedule' 
               ? 'Your Schedule has been created successfully' 
               : notif.type === 'vehicleRequest' 
@@ -116,7 +122,7 @@ export default function Notification() {
             <Text style={tw`mb-1 text-gray-600`}>Return Date: {notif.returnDate}</Text>
           )}
           {notif.cost !== undefined && (
-            <Text style={tw`mb-1 text-gray-600`}>Cost: ${notif.cost}</Text>
+            <Text style={tw`mb-1 text-gray-600`}>Cost: Rs.{notif.cost}.00</Text>
           )}
           {notif.pickupTime && (
             <Text style={tw`mb-1 text-gray-600`}>Pickup Time: {notif.pickupTime}</Text>

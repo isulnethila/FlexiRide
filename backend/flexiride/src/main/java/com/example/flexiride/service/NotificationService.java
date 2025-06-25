@@ -2,17 +2,24 @@ package com.example.flexiride.service;
 
 import com.example.flexiride.model.Notification;
 import com.example.flexiride.repository.NotificationRepository;
+import com.example.flexiride.service.UserService;
+import com.example.flexiride.dto.NotificationWithUserNameDTO;
+import com.example.flexiride.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private UserService userService;
 
     public List<Notification> getAllNotifications() {
         return notificationRepository.findAll();
@@ -36,5 +43,38 @@ public class NotificationService {
 
     public void deleteNotification(String id) {
         notificationRepository.deleteById(id);
+    }
+
+    public List<NotificationWithUserNameDTO> getAllNotificationsWithUserName() {
+        List<Notification> notifications = notificationRepository.findAll();
+        return notifications.stream().map(notification -> {
+            String userName = "";
+            try {
+                if (notification.getVehicleOwnerId() != null) {
+                    Long vehicleOwnerIdLong = Long.parseLong(notification.getVehicleOwnerId());
+                    Optional<User> userOpt = userService.getUserById(vehicleOwnerIdLong);
+                    if (userOpt.isPresent()) {
+                        userName = userOpt.get().getUsername();
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Log or handle invalid vehicleOwnerId format
+            }
+            return new NotificationWithUserNameDTO(
+                notification.getId(),
+                notification.getType(),
+                notification.getMessage(),
+                notification.getStatus(),
+                notification.getUserId(),
+                notification.getVehicleOwnerId(),
+                notification.getPhoneNumber(),
+                notification.getCost(),
+                notification.getPickupDate(),
+                notification.getReturnDate(),
+                notification.getPickupTime(),
+                notification.getVehicleName(),
+                userName
+            );
+        }).collect(Collectors.toList());
     }
 }
