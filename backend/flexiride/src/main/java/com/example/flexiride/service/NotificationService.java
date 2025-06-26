@@ -104,46 +104,13 @@ public class NotificationService {
             notificationRepository.save(notification);
 
             // Save to request_a_r table
-            String vehicleOwnerUsername = "";
-            String requestUsername = "";
+            String vehicleOwnerUsername = getUsernameFromUserId(notification.getVehicleOwnerId());
+            String requestUsername = getUsernameFromUserId(notification.getUserId());
             String vehicleName = notification.getVehicleName();
             String pickupDate = notification.getPickupDate();
             String returnDate = notification.getReturnDate();
             Double cost = notification.getCost() != null ? notification.getCost().doubleValue() : 0.0;
             String pickupTime = notification.getPickupTime();
-
-            // Get vehicle owner username
-            if (notification.getVehicleOwnerId() != null) {
-                try {
-                    Long vehicleOwnerIdLong = Long.parseLong(notification.getVehicleOwnerId());
-                    Optional<User> vehicleOwnerOpt = userService.getUserById(vehicleOwnerIdLong);
-                    if (vehicleOwnerOpt.isPresent()) {
-                        vehicleOwnerUsername = vehicleOwnerOpt.get().getUsername();
-                    }
-                } catch (NumberFormatException e) {
-                    // handle error
-                }
-            }
-            if (vehicleOwnerUsername == null) {
-                vehicleOwnerUsername = "";
-            }
-
-            // Get request username from notification DTO instead of Notification entity
-            // Since Notification entity does not have getUserName(), we use userId to get username
-            if (notification.getUserId() != null) {
-                try {
-                    Long userIdLong = Long.parseLong(notification.getUserId());
-                    Optional<User> userOpt = userService.getUserById(userIdLong);
-                    if (userOpt.isPresent()) {
-                        requestUsername = userOpt.get().getUsername();
-                    }
-                } catch (NumberFormatException e) {
-                    // handle error
-                }
-            }
-            if (requestUsername == null) {
-                requestUsername = "";
-            }
 
             RequestAR requestAR = new RequestAR(
                 vehicleOwnerUsername,
@@ -170,39 +137,13 @@ public class NotificationService {
             notificationRepository.save(notification);
 
             // Save to request_a_r table
-            String vehicleOwnerUsername = "";
-            String requestUsername = "";
+            String vehicleOwnerUsername = getUsernameFromUserId(notification.getVehicleOwnerId());
+            String requestUsername = getUsernameFromUserId(notification.getUserId());
             String vehicleName = notification.getVehicleName();
             String pickupDate = notification.getPickupDate();
             String returnDate = notification.getReturnDate();
             Double cost = notification.getCost() != null ? notification.getCost().doubleValue() : 0.0;
             String pickupTime = notification.getPickupTime();
-
-            // Get vehicle owner username
-            if (notification.getVehicleOwnerId() != null) {
-                try {
-                    Long vehicleOwnerIdLong = Long.parseLong(notification.getVehicleOwnerId());
-                    Optional<User> vehicleOwnerOpt = userService.getUserById(vehicleOwnerIdLong);
-                    if (vehicleOwnerOpt.isPresent()) {
-                        vehicleOwnerUsername = vehicleOwnerOpt.get().getUsername();
-                    }
-                } catch (NumberFormatException e) {
-                    // handle error
-                }
-            }
-
-            // Get request username
-            if (notification.getUserId() != null) {
-                try {
-                    Long userIdLong = Long.parseLong(notification.getUserId());
-                    Optional<User> userOpt = userService.getUserById(userIdLong);
-                    if (userOpt.isPresent()) {
-                        requestUsername = userOpt.get().getUsername();
-                    }
-                } catch (NumberFormatException e) {
-                    // handle error
-                }
-            }
 
             RequestAR requestAR = new RequestAR(
                 vehicleOwnerUsername,
@@ -224,5 +165,19 @@ public class NotificationService {
     // New method to create notification with userId and vehicleOwnerId
     public Notification createNotification(Notification notification) {
         return notificationRepository.save(notification);
+    }
+
+    // Helper method to get username from userId
+    private String getUsernameFromUserId(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            return "";
+        }
+        try {
+            Long userIdLong = Long.parseLong(userId);
+            Optional<User> userOpt = userService.getUserById(userIdLong);
+            return userOpt.map(User::getUsername).orElse("");
+        } catch (NumberFormatException e) {
+            return "";
+        }
     }
 }
