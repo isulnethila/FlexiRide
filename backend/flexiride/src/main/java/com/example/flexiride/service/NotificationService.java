@@ -103,9 +103,31 @@ public class NotificationService {
             notification.setStatus("accepted");
             notificationRepository.save(notification);
 
-            // Save to request_a_r table
-            String vehicleOwnerUsername = getUsernameFromUserId(notification.getVehicleOwnerId());
-            String requestUsername = getUsernameFromUserId(notification.getUserId());
+            // Get usernames directly from the notification if available
+            String vehicleOwnerUsername = notification.getVehicleOwnerId();
+            String requestUsername = notification.getUserId();
+
+            // If they're numeric IDs, try to convert to usernames
+            try {
+                if (vehicleOwnerUsername != null && vehicleOwnerUsername.matches("\\d+")) {
+                    Long ownerId = Long.parseLong(vehicleOwnerUsername);
+                    Optional<User> ownerOpt = userService.getUserById(ownerId);
+                    if (ownerOpt.isPresent()) {
+                        vehicleOwnerUsername = ownerOpt.get().getUsername();
+                    }
+                }
+
+                if (requestUsername != null && requestUsername.matches("\\d+")) {
+                    Long requesterId = Long.parseLong(requestUsername);
+                    Optional<User> requesterOpt = userService.getUserById(requesterId);
+                    if (requesterOpt.isPresent()) {
+                        requestUsername = requesterOpt.get().getUsername();
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Handle conversion error
+            }
+
             String vehicleName = notification.getVehicleName();
             String pickupDate = notification.getPickupDate();
             String returnDate = notification.getReturnDate();
@@ -136,9 +158,31 @@ public class NotificationService {
             notification.setStatus("rejected");
             notificationRepository.save(notification);
 
-            // Save to request_a_r table
-            String vehicleOwnerUsername = getUsernameFromUserId(notification.getVehicleOwnerId());
-            String requestUsername = getUsernameFromUserId(notification.getUserId());
+            // Get usernames directly from the notification if available
+            String vehicleOwnerUsername = notification.getVehicleOwnerId();
+            String requestUsername = notification.getUserId();
+
+            // If they're numeric IDs, try to convert to usernames
+            try {
+                if (vehicleOwnerUsername != null && vehicleOwnerUsername.matches("\\d+")) {
+                    Long ownerId = Long.parseLong(vehicleOwnerUsername);
+                    Optional<User> ownerOpt = userService.getUserById(ownerId);
+                    if (ownerOpt.isPresent()) {
+                        vehicleOwnerUsername = ownerOpt.get().getUsername();
+                    }
+                }
+
+                if (requestUsername != null && requestUsername.matches("\\d+")) {
+                    Long requesterId = Long.parseLong(requestUsername);
+                    Optional<User> requesterOpt = userService.getUserById(requesterId);
+                    if (requesterOpt.isPresent()) {
+                        requestUsername = requesterOpt.get().getUsername();
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Handle conversion error
+            }
+
             String vehicleName = notification.getVehicleName();
             String pickupDate = notification.getPickupDate();
             String returnDate = notification.getReturnDate();
