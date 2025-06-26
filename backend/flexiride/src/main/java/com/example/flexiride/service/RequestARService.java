@@ -26,13 +26,6 @@ public class RequestARService {
                 .collect(Collectors.toList());
     }
 
-    public List<RequestARDTO> getRequestARsByRequestUsername(String requestUsername) {
-        List<RequestAR> requestARList = requestARRepository.findByRequestUsername(requestUsername);
-        return requestARList.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
     private RequestARDTO convertToDTO(RequestAR requestAR) {
         return new RequestARDTO(
                 requestAR.getCost(),
@@ -40,9 +33,7 @@ public class RequestARService {
                 requestAR.getPickupTime(),
                 requestAR.getVehicleName(),
                 requestAR.getRequestUsername(),
-                requestAR.getVehicleOwnerUsername(),
-                requestAR.getMessage(),
-                requestAR.getReturnDate()
+                requestAR.getVehicleOwnerUsername()
         );
     }
 
@@ -54,8 +45,6 @@ public class RequestARService {
         requestAR.setVehicleName(requestARDTO.getVehicleName());
         requestAR.setRequestUsername(requestARDTO.getRequestUsername());
         requestAR.setVehicleOwnerUsername(requestARDTO.getVehicleOwnerUsername());
-        requestAR.setMessage(requestARDTO.getMessage());
-        requestAR.setReturnDate(requestARDTO.getReturnDate());
         return requestAR;
     }
 

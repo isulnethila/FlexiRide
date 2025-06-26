@@ -103,27 +103,41 @@ public class NotificationService {
             notification.setStatus("accepted");
             notificationRepository.save(notification);
 
-            // Get the requesting user's ID (this should be stored in notification.getUserId())
-            String requestUserId = notification.getUserId();
+            // Get usernames directly from the notification if available
+            String vehicleOwnerUsername = notification.getVehicleOwnerId();
+            String requestUsername = notification.getUserId();
 
-            // Get the vehicle owner's username
-            String vehicleOwnerUsername = getUsernameFromUserId(notification.getVehicleOwnerId());
+            // If they're numeric IDs, try to convert to usernames
+            try {
+                if (vehicleOwnerUsername != null && vehicleOwnerUsername.matches("\\d+")) {
+                    Long ownerId = Long.parseLong(vehicleOwnerUsername);
+                    Optional<User> ownerOpt = userService.getUserById(ownerId);
+                    if (ownerOpt.isPresent()) {
+                        vehicleOwnerUsername = ownerOpt.get().getUsername();
+                    }
+                }
 
-            // Get the requesting user's username
-            String requestUsername = getUsernameFromUserId(requestUserId);
+                if (requestUsername != null && requestUsername.matches("\\d+")) {
+                    Long requesterId = Long.parseLong(requestUsername);
+                    Optional<User> requesterOpt = userService.getUserById(requesterId);
+                    if (requesterOpt.isPresent()) {
+                        requestUsername = requesterOpt.get().getUsername();
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Handle conversion error
+            }
 
-            // Get other details
             String vehicleName = notification.getVehicleName();
             String pickupDate = notification.getPickupDate();
             String returnDate = notification.getReturnDate();
             Double cost = notification.getCost() != null ? notification.getCost().doubleValue() : 0.0;
             String pickupTime = notification.getPickupTime();
 
-            // Save to request_a_r table
             RequestAR requestAR = new RequestAR(
                 vehicleOwnerUsername,
                 requestUsername,
-                "Your request has been accepted",
+                "user request is accepted",
                 vehicleName,
                 pickupDate,
                 returnDate,
@@ -131,22 +145,6 @@ public class NotificationService {
                 pickupTime
             );
             requestARRepository.save(requestAR);
-
-            // Create a new notification for the requesting user
-            Notification userNotification = new Notification();
-            userNotification.setId(java.util.UUID.randomUUID().toString());
-            userNotification.setType("RequestStatus");
-            userNotification.setMessage("Your request for " + vehicleName + " has been accepted");
-            userNotification.setStatus("Unread");
-            userNotification.setUserId(requestUserId); // Set the actual user ID, not username
-            userNotification.setVehicleOwnerId(notification.getVehicleOwnerId());
-            userNotification.setPhoneNumber(notification.getPhoneNumber());
-            userNotification.setCost(notification.getCost());
-            userNotification.setPickupDate(pickupDate);
-            userNotification.setReturnDate(returnDate);
-            userNotification.setPickupTime(pickupTime);
-            userNotification.setVehicleName(vehicleName);
-            notificationRepository.save(userNotification);
 
             return Optional.of(notification);
         }
@@ -202,22 +200,6 @@ public class NotificationService {
                 pickupTime
             );
             requestARRepository.save(requestAR);
-
-            // Create a new notification for the requesting user
-            Notification userNotification = new Notification();
-            userNotification.setId(java.util.UUID.randomUUID().toString());
-            userNotification.setType("RequestStatus");
-            userNotification.setMessage("Your request for " + vehicleName + " has been rejected");
-            userNotification.setStatus("Unread");
-            userNotification.setUserId(requestUsername); // This goes to the requester
-            userNotification.setVehicleOwnerId(vehicleOwnerUsername);
-            userNotification.setPhoneNumber(notification.getPhoneNumber());
-            userNotification.setCost(notification.getCost());
-            userNotification.setPickupDate(pickupDate);
-            userNotification.setReturnDate(returnDate);
-            userNotification.setPickupTime(pickupTime);
-            userNotification.setVehicleName(vehicleName);
-            notificationRepository.save(userNotification);
 
             return Optional.of(notification);
         }
