@@ -17,7 +17,6 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@RequestBody User user) {
-        // In a real app, password should be hashed and validation added
         User savedUser = userService.saveUser(user);
         return ResponseEntity.ok(savedUser);
     }
@@ -26,7 +25,6 @@ public class UserController {
     public ResponseEntity<String> login(@RequestBody User user) {
         Optional<User> existingUser = userService.findByUsername(user.getUsername());
         if (existingUser.isPresent() && existingUser.get().getPassword().equals(user.getPassword())) {
-            // In a real app, return JWT or session token
             return ResponseEntity.ok("Login successful");
         } else {
             return ResponseEntity.status(401).body("Invalid username or password");
@@ -52,7 +50,7 @@ public class UserController {
             User user = userOptional.get();
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
-            user.setPassword(userDetails.getPassword()); // In real app, hash password
+            user.setPassword(userDetails.getPassword());
             user.setCity(userDetails.getCity());
             user.setDistrict(userDetails.getDistrict());
             User updatedUser = userService.saveUser(user);

@@ -31,4 +31,10 @@ public class RequestARController {
     public RequestARDTO createRequestAR(@RequestBody RequestARDTO requestARDTO) {
         return requestARService.createRequestAR(requestARDTO);
     }
+
+    // New endpoint to send request from user to vehicle owner
+    @PostMapping("/sendRequest")
+    public RequestARDTO sendRequestToVehicleOwner(@RequestBody RequestARDTO requestARDTO) {
+        return requestARService.sendRequestToVehicleOwner(requestARDTO);
+    }
 }

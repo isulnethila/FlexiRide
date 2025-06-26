@@ -2,7 +2,9 @@ package com.example.flexiride.service;
 
 import com.example.flexiride.dto.RequestARDTO;
 import com.example.flexiride.model.RequestAR;
+import com.example.flexiride.model.Notification;
 import com.example.flexiride.repository.RequestARRepository;
+import com.example.flexiride.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +15,12 @@ import java.util.stream.Collectors;
 public class RequestARService {
 
     private final RequestARRepository requestARRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public RequestARService(RequestARRepository requestARRepository) {
+    public RequestARService(RequestARRepository requestARRepository, NotificationService notificationService) {
         this.requestARRepository = requestARRepository;
+        this.notificationService = notificationService;
     }
 
     public List<RequestARDTO> getAllRequestARs() {
@@ -51,6 +55,27 @@ public class RequestARService {
     public RequestARDTO createRequestAR(RequestARDTO requestARDTO) {
         RequestAR requestAR = convertToEntity(requestARDTO);
         RequestAR savedRequestAR = requestARRepository.save(requestAR);
+        return convertToDTO(savedRequestAR);
+    }
+
+    public RequestARDTO sendRequestToVehicleOwner(RequestARDTO requestARDTO) {
+        RequestAR requestAR = convertToEntity(requestARDTO);
+        RequestAR savedRequestAR = requestARRepository.save(requestAR);
+
+        Notification notification = new Notification();
+        notification.setUserId(requestAR.getRequestUsername());
+        notification.setVehicleOwnerId(requestAR.getVehicleOwnerUsername());
+        notification.setType("Request Sent");
+        notification.setMessage("Your request for vehicle " + requestAR.getVehicleName() + " has been sent to the owner.");
+        notification.setStatus("unread");
+        notification.setCost(requestAR.getCost().intValue());
+        notification.setPickupDate(requestAR.getPickupDate());
+        notification.setReturnDate(null);
+        notification.setPickupTime(requestAR.getPickupTime());
+        notification.setVehicleName(requestAR.getVehicleName());
+
+        notificationService.saveNotification(notification);
+
         return convertToDTO(savedRequestAR);
     }
 }
