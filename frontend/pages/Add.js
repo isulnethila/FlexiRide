@@ -18,7 +18,7 @@ const VehicleCard = ({ vehicle, onEditPress }) => (
         />
         <View style={tw`justify-center flex-1`}>
           <Text style={tw`font-bold text-gray-900`}>{vehicle.name}</Text>
-          <Text style={tw`font-bold text-blue-600`}>{vehicle.price}</Text>
+          <Text style={tw`font-bold text-blue-600`}>Rs.{vehicle.price}.00/Day</Text>
           <Text style={tw`text-xs text-gray-500`}>{vehicle.details}</Text>
         </View>
       </View>

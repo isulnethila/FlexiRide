@@ -17,7 +17,7 @@ export default function Favourite({ navigation }) {
       <View style={tw`flex-1`}>
         <Text style={tw`text-lg font-semibold`}>{item.name}</Text>
         <Text style={tw`text-gray-600`}>{item.details}</Text>
-        <Text style={tw`text-blue-600 font-bold`}>{item.price}</Text>
+        <Text style={tw`text-blue-600 font-bold`}>Rs.{item.price}.00/Day</Text>
       </View>
       
     </TouchableOpacity>

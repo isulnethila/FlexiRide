@@ -103,45 +103,46 @@ export default function Home() {
     navigation.navigate('VehicleDetails', { vehicle });
   };
 
-  const VehicleCard = ({ vehicle, horizontal = true }) => (
+  const VehicleCard = ({ vehicle }) => (
     <TouchableOpacity 
-      style={tw`bg-white rounded-lg p-4 ${horizontal ? 'mr-3 w-40 h-50' : 'mb-3 w-full'} shadow-sm border border-gray-100`}
+      style={tw`bg-white rounded-xl mb-4 shadow-lg overflow-hidden mx-5`}
       onPress={() => handleVehiclePress(vehicle)}
     >
-      <View style={tw``}>
-        <Image 
-          source={{ uri: vehicle.imageUri }} 
-          style={tw`${horizontal ? 'w-15 h-20 mb-2' : 'w-20 h-30 mb-2 justify-center'} mr-3`}
-          resizeMode="contain"
-        />
-        <View style={tw``}>
-          <View style={tw``}>
-            <Text style={tw`font-bold text-gray-900`}>{vehicle.name}</Text>
-            <Text style={tw`font-bold text-blue-600`}>{vehicle.price}</Text>
-          </View>
-          <Text style={tw`text-xs text-gray-500`}>{vehicle.details}</Text>
-          {vehicle.distance && (
-            <Text style={tw`text-xs text-gray-400 mt-1`}>{vehicle.distance} away</Text>
-          )}
+      <Image 
+        source={{ uri: vehicle.imageUri || 'https://via.placeholder.com/300x200' }} 
+        style={tw`w-full h-48`}
+        resizeMode="cover"
+      />
+      <View style={tw`p-4`}>
+        <Text style={tw`text-xl font-bold text-gray-900 mb-1`}>{vehicle.name}</Text>
+        <Text style={tw`text-gray-600 text-sm mb-2`}>{vehicle.details}</Text>
+        <View style={tw`flex-row items-center justify-between`}>
+          <Text style={tw`text-lg font-bold text-blue-600`}>Rs.{vehicle.price}.00/day</Text>
+        </View>
+        <View style={tw`flex-row items-center mt-2`}>
+          <Ionicons name="location" size={16} color="#6B7280" />
+          <Text style={tw`ml-1 text-sm text-gray-600`}>{vehicle.district}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <View style={tw`flex-1 bg-white p-5 pt-7`}>
+    <View style={tw`flex-1 bg-gray-50`}>
       {/* Header Section */}
-      <View style={tw`mb-3 flex-row justify-between items-center`}>
-        <Text style={tw`text-2xl font-bold text-gray-900`}>FlexiRide</Text>
-        <TouchableOpacity style={tw`p-2`} onPress={() => navigation.navigate('Notification')}>
-          <Ionicons name="notifications-outline" size={28} color="black" />
-        </TouchableOpacity>
+      <View style={tw`bg-white pt-12 pb-6 px-5 shadow-sm`}>
+        <View style={tw`flex-row justify-between items-center mb-4`}>
+          <Text style={tw`text-3xl font-bold text-gray-900`}>FlexiRide</Text>
+          <TouchableOpacity style={tw`p-2`} onPress={() => navigation.navigate('Notification')}>
+            <Ionicons name="notifications-outline" size={28} color="black" />
+          </TouchableOpacity>
+        </View>
+        <Text style={tw`text-sm text-gray-500`}>{formattedDate}</Text>
       </View>
-      <Text style={tw`text-xs text-gray-500 mb-3`}>{formattedDate}</Text>
 
       {/* Near You Section */}
-      <View style={tw`flex-1`}>
-        <Text style={tw`text-lg font-semibold mb-2 text-gray-900`}>Near By You</Text>
+      <View style={tw`flex-1 px-5`}>
+        <Text style={tw`text-2xl font-bold mb-4 text-gray-900`}>Near By You</Text>
         {loading && (
           <View style={tw`flex-1 justify-center items-center`}>
             <Text style={tw`text-gray-500 text-lg`}>Loading vehicles...</Text>
@@ -159,9 +160,10 @@ export default function Home() {
         )}
         <FlatList
           data={nearbyVehicles}
-          renderItem={({item}) => <VehicleCard vehicle={item} horizontal={false} />}
+          renderItem={({item}) => <VehicleCard vehicle={item} />}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={tw`pb-5`}
         />
       </View>
     </View>
