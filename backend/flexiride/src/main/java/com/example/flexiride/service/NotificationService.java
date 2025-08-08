@@ -103,11 +103,11 @@ public class NotificationService {
             notification.setStatus("accepted");
             notificationRepository.save(notification);
 
-            // Get usernames directly from the notification if available
+            
             String vehicleOwnerUsername = notification.getVehicleOwnerId();
             String requestUsername = notification.getUserId();
 
-            // If they're numeric IDs, try to convert to usernames
+           
             try {
                 if (vehicleOwnerUsername != null && vehicleOwnerUsername.matches("\\d+")) {
                     Long ownerId = Long.parseLong(vehicleOwnerUsername);
@@ -206,7 +206,7 @@ public class NotificationService {
         return Optional.empty();
     }
 
-    // New method to create notification with userId and vehicleOwnerId
+    
     public Notification createNotification(Notification notification) {
         return notificationRepository.save(notification);
     }
