@@ -64,7 +64,7 @@ export default function Profile() {
         )}
       </View>
 
-      <Text style={tw`text-xl font-semibold mb-4`}>Requests</Text>
+      
 
       {requests.map((req) => (
         <View
